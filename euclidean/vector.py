@@ -7,7 +7,8 @@ class Vector:
         self._coords = np.array(coords, dtype=dtype)
 
     def _new(self, coords):
-        return Vector(coords, dtype=self._coords.dtype)
+        constructor = type(self)
+        return constructor(*coords, dtype=self._coords.dtype)
 
     def dot(self, other):
         assert(len(self._coords) == len(other.__coords))
@@ -20,7 +21,7 @@ class Vector:
         return self._new(self._coords / self.magnitude())
 
     def __eq__(self, other):
-        return all(self._coords == other.__coords)
+        return (self._coords == other._coords).all()
 
     def __neg__(self):
         return self._new(-self._coords)
@@ -53,6 +54,7 @@ class Vector:
 
     def coords(self):
         return self._coords.copy()
+
 
 
 class Vector2(Vector):
@@ -89,6 +91,9 @@ class Vector2(Vector):
         new_origin = self - point
         return new_origin.rotate(angle) + point
 
+    def __repr__(self):
+        return 'Vector2(%f, %f, dtype=%s)' % (self.x, self.y, self._coords.dtype)
+
 class Vector3(Vector):
 
     def __init__(self, x, y, z, dtype=np.float64):
@@ -112,3 +117,6 @@ class Vector3(Vector):
             self.z * other.x - self.x * other.z,
             self.x * other.y - self.y * other.z
         )
+
+    def __repr__(self):
+        return 'Vector3(%f, %f, %f, dtype=%s)' % (self.x, self.y, self.z, self._coords.dtype)
