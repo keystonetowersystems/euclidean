@@ -91,6 +91,11 @@ class Vector2(Vector):
         new_origin = self - point
         return new_origin.rotate(angle) + point
 
+    def polar(self):
+        radius = self.magnitude()
+        theta = np.arctan2(self.y, self.x)
+        return (radius, theta)
+
     def __repr__(self):
         return 'Vector2(%f, %f, dtype=%s)' % (self.x, self.y, self._coords.dtype)
 
