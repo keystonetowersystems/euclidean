@@ -77,6 +77,18 @@ class Vector2(Vector):
     def perpendicular(self):
         return self._new([-self.y, self.x])
 
+    def rotate(self, angle):
+        cosa = np.cos(angle)
+        sina = np.sin(angle)
+        return self._new([
+            self.x * cosa - self.y * sina,
+            self.x * sina + self.y * cosa
+        ])
+
+    def rotate_around(self, point, angle):
+        new_origin = self - point
+        return new_origin.rotate(angle) + point
+
 class Vector3(Vector):
 
     def __init__(self, x, y, z, dtype=np.float64):
