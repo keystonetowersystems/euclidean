@@ -107,11 +107,20 @@ class LineSegment2:
         plt.plot([self._p1.x, self._p2.x], [self._p1.y, self._p2.y], **kwargs)
 
 
+    def polyline(self, n=2):
+        assert(n >= 2)
+        polyline = PolyLine2()
+        polyline.append_raw(
+            np.linspace(self._p1.x, self._p2.x, n),
+            np.linspace(self._p1.y, self._p2.y, n)
+        )
+        return polyline
+
 class Circle:
 
     __slots__ = ['center', 'radius']
 
-    def __init__(self, center, radius):
+    def __init__(self, center=Vector2(0,0), radius=1):
         assert(isinstance(center, Vector2))
         assert(radius > 0)
         self.center = center
@@ -162,15 +171,53 @@ class PolyLine2:
         assert(isinstance(polyline, PolyLine2))
         self._xs = np.append(self._xs, polyline._xs)
         self._ys = np.append(self._ys, polyline._ys)
+        return self
 
     def append(self, *points):
         assert(all([isinstance(p, Vector2) for p in points]))
-        self._xs = np.append(self._xs, [p.x for p in points])
-        self._ys = np.append(self._ys, [p.y for p in points])
+        self.append_raw([p.x for p in points], [p.y for p in points])
+        return self
+
+    def append_raw(self, xs, ys):
+        self._xs = np.append(self._xs, xs)
+        self._ys = np.append(self._ys, ys)
+        return self
 
     def draw(self, **kwargs):
         plt.plot(self._xs, self._ys, **kwargs)
+        return self
 
     def area(self):
         # NOTE: THIS WILL ONLY WORK FOR A WELL FORMED SIMPLE POLYGON!
         return 0.5 * np.abs(np.dot(self._xs, np.roll(self._ys, 1)) - np.dot(self._ys, np.roll(self._xs, 1)))
+
+    def reverse(self):
+        self._xs = np.fliplr(self._xs)
+        self._ys = np.fliplr(self._ys)
+        return self
+
+class PolyLineSet2:
+
+    def __init__(self, *polylines2):
+        self.polyline_set = set()
+        for polyline in polylines2:
+            self.add_polyline(polyline)
+
+    def add_polyline(self, polyline2):
+        assert(isinstance(polyline2, PolyLine2))
+        self.polyline_set.add(polyline2)
+
+    def draw(self, **kwargs):
+        for polyline in self.polyline_set:
+            polyline.draw(**kwargs)
+
+
+class Arc2:
+
+    def __init__(self, center=Vector2(0,0), radius=1, theta=np.pi):
+        self.center = center
+        self.radius = radius
+        self.theta = theta
+
+    def polyline(self, n=50):
+        polyline = PolyLine2()
