@@ -1,5 +1,7 @@
 import numpy as np
 
+import matplotlib.pyplot as plt
+
 class Vector:
     __slots__ = ['_coords']
 
@@ -11,7 +13,7 @@ class Vector:
         return constructor(*coords, dtype=self._coords.dtype)
 
     def dot(self, other):
-        assert(len(self._coords) == len(other.__coords))
+        assert(len(self._coords) == len(other._coords))
         return self._coords.dot(other._coords)
 
     def magnitude(self):
@@ -21,6 +23,8 @@ class Vector:
         return self._new(self._coords / self.magnitude())
 
     def __eq__(self, other):
+        if not isinstance(other, Vector):
+            return False
         return (self._coords == other._coords).all()
 
     def __neg__(self):
@@ -91,10 +95,16 @@ class Vector2(Vector):
         new_origin = self - point
         return new_origin.rotate(angle) + point
 
+    def angle(self, other):
+        return np.arccos(self.dot(other) / self.magnitude() / other.magnitude())
+
     def polar(self):
         radius = self.magnitude()
         theta = np.arctan2(self.y, self.x)
         return (radius, theta)
+
+    def draw(self, **kwargs):
+        plt.scatter(self.x, self.y, **kwargs)
 
     def __repr__(self):
         return 'Vector2(%f, %f, dtype=%s)' % (self.x, self.y, self._coords.dtype)
