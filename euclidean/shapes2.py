@@ -5,6 +5,18 @@ from .vector import Vector2
 
 DEFAULT_EPSILON = 0.00001
 
+
+class Shape2:
+
+    def intersect_line(self, line):
+        pass
+
+    def intersect_line_segment(self, line_segment):
+        pass
+
+    def contains(self, point):
+        pass
+
 class Line2:
 
     __slots__ = ['_point', '_vector']
@@ -44,6 +56,12 @@ class Line2:
         y = a * x + c
 
         return self._point._new([x, y])
+
+    def intersect_line_segment(self, line_segment):
+        point = self.intersect_line(line_segment.line())
+        if line_segment.contains(point):
+            return point
+        return None
 
     def perpendicular_line(self, point):
         assert(isinstance(point, Vector2))
@@ -158,6 +176,10 @@ class Circle:
         result.append(self.center + Vector2(x0 + x_off, y0 + y_off))
         result.append(self.center + Vector2(x0 - x_off, y0 - y_off))
         return result
+
+    def intersect_line_segment(self, line_segment):
+        points = self.intersect_line(line_segment.line())
+        return [p for p in points if line_segment.contains(p)]
 
 class PolyLine2:
 
