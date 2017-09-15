@@ -212,6 +212,7 @@ class PolyLine2:
         return self
 
     def draw(self, **kwargs):
+        plt.axis('equal')
         plt.plot(self._xs, self._ys, **kwargs)
         return self
 

@@ -33,9 +33,9 @@ class PolyLine3:
     __slots__ = ['_xs', '_ys', '_zs']
 
     def __init__(self, *points, dtype=np.float64):
-        self._xs = np.array((p.x for p in points), dtype=dtype)
-        self._ys = np.array((p.y for p in points), dtype=dtype)
-        self._zs = np.array((p.z for p in points), dtype=dtype)
+        self._xs = np.array([p.x for p in points], dtype=dtype)
+        self._ys = np.array([p.y for p in points], dtype=dtype)
+        self._zs = np.array([p.z for p in points], dtype=dtype)
 
     def _points(self):
         return zip(self._xs, self._ys, self._zs)
@@ -54,7 +54,7 @@ class PolyLine3:
         return self
 
     def concat(self, polyline):
-        assert(isinstance(polyline), PolyLine3)
+        assert(isinstance(polyline, PolyLine3))
         return self.append_raw(polyline._xs, polyline._ys, polyline._zs)
 
     def append_raw(self, xs, ys, zs):
