@@ -17,6 +17,9 @@ class Shape2:
     def contains(self, point):
         pass
 
+    def points_between(self, v1, v2):
+        pass
+
 class Line2:
 
     __slots__ = ['_point', '_vector']
@@ -136,24 +139,24 @@ class LineSegment2:
 
 class Circle:
 
-    __slots__ = ['center', 'radius']
+    __slots__ = ['radius']
 
     def __init__(self, center=Vector2(0,0), radius=1):
         assert(isinstance(center, Vector2))
         assert(radius > 0)
-        self.center = center
         self.radius = radius
 
     def intersect_line(self, line):
         result = []
-        line_ = line.translate(self.center * -1)
-        dx = line_.p2.x - line_.p1.x
-        dy = line_.p2.y - line_.p1.y
-        dr = line_.length()
+        #line_ = line.translate(self.center * -1)
+        line = LineSegment2(line._point, line._point + line._vector)
+        dx = line._p2.x - line._p1.x
+        dy = line._p2.y - line._p1.y
+        dr = line.length()
         D = np.linalg.det(
             np.matrix([
-                [line_.p1.x, line_.p1.y],
-                [line_.p2.x, line_.p2.y]
+                [line._p1.x, line._p1.y],
+                [line._p2.x, line._p2.y]
             ])
         )
 
@@ -166,20 +169,23 @@ class Circle:
         x0 = D * dy / dr2
         y0 = -D * dx / dr2
         if discriminant == 0:
-            result.append(Vector2(x0, y0) + self.center)
+            result.append(Vector2(x0, y0))
             return result
 
         sqrt_discriminant = np.sqrt(discriminant)
         x_off = np.sign(dy) * dx * sqrt_discriminant / dr2
         y_off = np.abs(dy) * sqrt_discriminant / dr2
 
-        result.append(self.center + Vector2(x0 + x_off, y0 + y_off))
-        result.append(self.center + Vector2(x0 - x_off, y0 - y_off))
+        result.append(Vector2(x0 + x_off, y0 + y_off))
+        result.append(Vector2(x0 - x_off, y0 - y_off))
         return result
 
     def intersect_line_segment(self, line_segment):
         points = self.intersect_line(line_segment.line())
         return [p for p in points if line_segment.contains(p)]
+
+    def contains(self, vector):
+        return (vector.magnitude() - self.radius) < DEFAULT_EPSILON
 
 class PolyLine2:
 
