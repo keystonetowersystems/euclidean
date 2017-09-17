@@ -225,6 +225,11 @@ class PolyLine2:
         self._ys = np.fliplr(self._ys)
         return self
 
+    def __add__(self, other : Vector2):
+        new_polyline = PolyLine2()
+        new_polyline.append_raw(self._xs + other.x, self._ys + other.y)
+        return new_polyline
+
 class PolyLineSet2:
 
     def __init__(self, *polylines2):
@@ -239,6 +244,14 @@ class PolyLineSet2:
     def draw(self, **kwargs):
         for polyline in self.polyline_set:
             polyline.draw(**kwargs)
+
+    def __add__(self, other : Vector2):
+        new_set = PolyLineSet2()
+        for polyline in self.polyline_set:
+            new_set.add_polyline(polyline + other)
+        return new_set
+
+
 
 
 class Arc2:

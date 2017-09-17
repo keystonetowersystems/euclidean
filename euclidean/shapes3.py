@@ -70,6 +70,14 @@ class PolyLine3:
             (p.z for p in points)
         )
 
+    def clear(self):
+        self._xs = np.array([], dtype=self._xs.dtype)
+        self._ys = np.array([], dtype=self._ys.dtype)
+        self._zs = np.array([], dtype=self._zs.dtype)
+
+    def empty(self):
+        return len(self._xs) == 0
+
     def draw(self, **kwargs):
         plt.plot(self._xs, self._ys, self._zs, **kwargs)
 
