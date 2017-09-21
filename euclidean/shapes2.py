@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from collections.abc import Iterable
+
 from .vector import Vector2
 
 DEFAULT_EPSILON = 0.00001
@@ -230,7 +232,7 @@ class PolyLine2:
         new_polyline.append_raw(self._xs + other.x, self._ys + other.y)
         return new_polyline
 
-class PolyLineSet2:
+class PolyLineSet2(Iterable):
 
     def __init__(self, *polylines2):
         self.polyline_set = set()
@@ -251,6 +253,8 @@ class PolyLineSet2:
             new_set.add_polyline(polyline + other)
         return new_set
 
+    def __iter__(self):
+        return iter(self.polyline_set)
 
 
 

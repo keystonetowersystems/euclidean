@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from collections.abc import Iterable
+
 from .vector import Vector3, Vector2
 from .shapes2 import PolyLine2,PolyLineSet2
 
@@ -81,7 +83,7 @@ class PolyLine3:
     def draw(self, **kwargs):
         plt.plot(self._xs, self._ys, self._zs, **kwargs)
 
-class PolyLineSet3:
+class PolyLineSet3(Iterable):
 
     def __init__(self, *polylines3):
         self.polyline_set = set()
@@ -98,5 +100,7 @@ class PolyLineSet3:
             polyline_set.add_polyline(polyline.project_xz(predicate))
         return polyline_set
 
+    def __iter__(self):
+        return iter(self.polyline_set)
 
 
