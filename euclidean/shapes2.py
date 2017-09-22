@@ -143,8 +143,7 @@ class Circle:
 
     __slots__ = ['radius']
 
-    def __init__(self, center=Vector2(0,0), radius=1):
-        assert(isinstance(center, Vector2))
+    def __init__(self, radius=1):
         assert(radius > 0)
         self.radius = radius
 
