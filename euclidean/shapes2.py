@@ -48,13 +48,22 @@ class Line2:
 
     def intersect_line(self, other):
         assert(isinstance(other, Line2))
+
+        if self._vector.x == 0:
+            if other._vector.x == 0:
+                return None
+            x = self._point.x
+            y = other.slope() * x + other.y_intercept()
+            return self._point._new([x, y])
+
+
         a = self.slope()
         c = self.y_intercept()
 
         b = other.slope()
         d = other.y_intercept()
 
-        if a == b:
+        if abs(a-b) < DEFAULT_EPSILON:
             return None
 
         x = (d - c) / (a - b)
