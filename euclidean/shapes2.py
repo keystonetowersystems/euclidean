@@ -230,6 +230,22 @@ class PolyLine2:
         # NOTE: THIS WILL ONLY WORK FOR A WELL FORMED SIMPLE POLYGON!
         return 0.5 * np.abs(np.dot(self._xs, np.roll(self._ys, 1)) - np.dot(self._ys, np.roll(self._xs, 1)))
 
+    def centroid(self):
+        if len(self._xs) == 0:
+            return (0, 0)
+        divisor = 6 * self.area()
+        (cx, cy) = (0, 0)
+        for i in range(len(self._xs) - 1):
+            x_0 = self._xs[i]
+            x_1 = self._xs[i+1]
+            y_0 = self._ys[i]
+            y_1 = self._ys[i+1]
+            cross = x_0 * y_1 - x_1 * y_0
+            cx += (x_0 + x_1) * cross
+            cy += (y_0 + y_1) * cross
+        return (cx / divisor, cy / divisor)
+
+
     def reverse(self):
         self._xs = np.fliplr(self._xs)
         self._ys = np.fliplr(self._ys)
