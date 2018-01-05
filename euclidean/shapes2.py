@@ -233,6 +233,8 @@ class PolyLine2:
     def centroid(self):
         if len(self._xs) == 0:
             return Vector2(0, 0)
+        #divisor = 3 * (np.dot(self._xs, np.roll(self._ys, 1)) - np.dot(self._ys, np.roll(self._xs, 1)))
+        #cx = np.add(self._xs + np.roll(self._xs))
         (a, cx, cy) = (0, 0, 0)
         (x_curr, y_curr) = (self._xs[0], self._ys[0])
         for (x_next, y_next) in zip(self._xs[1:], self._ys[1:]):
@@ -241,6 +243,10 @@ class PolyLine2:
             cy += (y_curr + y_next) * cross
             a += cross
             (x_curr, y_curr) = x_next, y_next
+        cross = x_curr * self._ys[0] - self._xs[0] * y_curr
+        cx += (x_curr + self._xs[0]) * cross
+        cy += (y_curr + self._ys[0]) * cross
+        a += cross
         return Vector2(cx, cy) / (3 * a)
 
 

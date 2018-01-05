@@ -42,12 +42,6 @@ class PolyLine3:
     def _points(self):
         return zip(self._xs, self._ys, self._zs)
 
-    def project_xz(self, predicate=lambda p: True):
-        polyline2 = PolyLine2()
-        indices = [predicate(Vector3(x, y, z)) for (x, y, z) in self._points()]
-        polyline2.append_raw(self._xs[indices], self._zs[indices])
-        return polyline2
-
     def filter(self, predicate=lambda p: True):
         indices = [predicate(Vector3(x, y, z) for (x, y, z) in self._points())]
         self._xs = self._xs[indices]
@@ -80,27 +74,9 @@ class PolyLine3:
     def empty(self):
         return len(self._xs) == 0
 
-    def draw(self, **kwargs):
-        plt.plot(self._xs, self._ys, self._zs, **kwargs)
-
-class PolyLineSet3(Iterable):
-
-    def __init__(self, *polylines3):
-        self.polyline_set = set()
-        for polyline in polylines3:
-            self.add_polyline(polyline)
-
-    def add_polyline(self, polyline):
-        assert(isinstance(polyline, PolyLine3))
-        self.polyline_set.add(polyline)
-
-    def project_xz(self, predicate=lambda p: True):
-        polyline_set = PolyLineSet2()
-        for polyline in self.polyline_set:
-            polyline_set.add_polyline(polyline.project_xz(predicate))
-        return polyline_set
-
-    def __iter__(self):
-        return iter(self.polyline_set)
-
-
+    def partition(self, predicate, true_cc, false_cc):
+        for (x, y, z) in self._points():
+            if predicate(x, y, z):
+                true_cc(x, y, z)
+            else:
+                false_cc(x, y, z)
