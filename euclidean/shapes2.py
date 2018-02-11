@@ -230,6 +230,11 @@ class PolyLine2:
         # NOTE: THIS WILL ONLY WORK FOR A WELL FORMED SIMPLE POLYGON!
         return 0.5 * np.abs(np.dot(self._xs, np.roll(self._ys, 1)) - np.dot(self._ys, np.roll(self._xs, 1)))
 
+    def length(self):
+        path = np.transpose(np.vstack((self._xs, self._ys)))
+        length = np.sum(np.sqrt(np.sum(np.diff(path, axis=0)**2, axis=1)))
+        return length
+
     def reverse(self):
         self._xs = np.fliplr(self._xs)
         self._ys = np.fliplr(self._ys)
