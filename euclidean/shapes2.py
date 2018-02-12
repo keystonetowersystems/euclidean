@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from collections.abc import Iterable
+from typing import Iterable
 
 from .vector import Vector2
 
@@ -120,6 +120,9 @@ class LineSegment2:
         dist_diff = path_dist - self.length()
         return dist_diff < DEFAULT_EPSILON
 
+    def does_intersect_line_segment(self, line):
+        pass
+
     def intersect_line_segment(self, line_segment):
         point = self.intersect_line(line_segment.line())
         if point == None or point not in line_segment:
@@ -135,9 +138,11 @@ class LineSegment2:
     def intersect_circle(self, circle):
         return [p for p in circle.intersect_line(self.line()) if self.contains(p)]
 
-    def draw(self, **kwargs):
-        plt.plot([self._p1.x, self._p2.x], [self._p1.y, self._p2.y], **kwargs)
+    #def draw(self, **kwargs):
+    #    plt.plot([self._p1.x, self._p2.x], [self._p1.y, self._p2.y], **kwargs)
 
+    def draw(self, ax, **kwargs):
+        ax.plot([self._p1.x, self._p2.x], [self._p1.y, self._p2.y], **kwargs)
 
     def polyline(self, n=2):
         assert(n >= 2)
@@ -201,9 +206,22 @@ class PolyLine2:
 
     __slots__ = ['_xs', '_ys']
 
-    def __init__(self, *points, dtype=np.float64):
-        self._xs = np.array([p.x for p in points], dtype=dtype)
-        self._ys = np.array([p.y for p in points], dtype=dtype)
+    def __init__(self, points : Iterable[Vector2] = None, dtype=np.float64):
+        self.set(points, dtype)
+
+    def set(self, points : Iterable[Vector2] = None, dtype=np.float64):
+        if points:
+            unzipper = ((v2.x, v2.y) for v2 in points)
+            (xs, ys) = zip(*unzipper)
+        else:
+            (xs, ys) = ([], [])
+
+        self._xs = np.array(list(xs), dtype=dtype)
+        self._ys = np.array(list(ys), dtype=dtype)
+        return self
+
+    def clear(self):
+        return self.set(dtype=self._xs.dtype)
 
     def concat(self, polyline):
         assert(isinstance(polyline, PolyLine2))
@@ -217,13 +235,17 @@ class PolyLine2:
         return self
 
     def append_raw(self, xs, ys):
-        self._xs = np.append(self._xs, xs)
-        self._ys = np.append(self._ys, ys)
+        self._xs = np.append(self._xs, list(xs))
+        self._ys = np.append(self._ys, list(ys))
         return self
 
-    def draw(self, **kwargs):
-        plt.axis('equal')
-        plt.plot(self._xs, self._ys, **kwargs)
+    def pen_up(self):
+        self.append_raw(np.nan, np.nan)
+
+    def draw(self, ax=None, **kwargs):
+        ax = ax if ax else plt.subplot()
+        ax.set_aspect('equal')
+        ax.plot(self._xs, self._ys, **kwargs)
         return self
 
     def area(self):
@@ -231,6 +253,8 @@ class PolyLine2:
         return 0.5 * np.abs(np.dot(self._xs, np.roll(self._ys, 1)) - np.dot(self._ys, np.roll(self._xs, 1)))
 
     def centroid(self):
+
+        #obviously will not work if not a well formed simple polygon with no nans
         if len(self._xs) == 0:
             return Vector2(0, 0)
         #divisor = 3 * (np.dot(self._xs, np.roll(self._ys, 1)) - np.dot(self._ys, np.roll(self._xs, 1)))
