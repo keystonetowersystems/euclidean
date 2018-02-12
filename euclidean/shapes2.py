@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from typing import Iterable
+from typing import Iterable as iterable_t
 
 from .vector import Vector2
 
@@ -147,7 +147,7 @@ class LineSegment2:
     def polyline(self, n=2):
         assert(n >= 2)
         polyline = PolyLine2()
-        polyline.append_raw(
+        polyline.concat_raw(
             np.linspace(self._p1.x, self._p2.x, n),
             np.linspace(self._p1.y, self._p2.y, n)
         )
@@ -206,46 +206,46 @@ class PolyLine2:
 
     __slots__ = ['_xs', '_ys']
 
-    def __init__(self, points : Iterable[Vector2] = None, dtype=np.float64):
+    def __init__(self, points : iterable_t[Vector2] = None, dtype=np.float64):
         self.set(points, dtype)
 
-    def set(self, points : Iterable[Vector2] = None, dtype=np.float64):
-        if points:
-            unzipper = ((v2.x, v2.y) for v2 in points)
-            (xs, ys) = zip(*unzipper)
-        else:
-            (xs, ys) = ([], [])
-
-        self._xs = np.array(list(xs), dtype=dtype)
-        self._ys = np.array(list(ys), dtype=dtype)
-        return self
+    def set(self, points : iterable_t[Vector2] = None, dtype=np.float64):
+        self._xs = np.array([], dtype=dtype)
+        self._ys = np.array([], dtype=dtype)
+        return self.concat_points(points)
 
     def clear(self):
         return self.set(dtype=self._xs.dtype)
 
+    def append(self, *points):
+        return self.concat_points(points)
+
     def concat(self, polyline):
-        assert(isinstance(polyline, PolyLine2))
         self._xs = np.append(self._xs, polyline._xs)
         self._ys = np.append(self._ys, polyline._ys)
         return self
 
-    def append(self, *points):
-        assert(all([isinstance(p, Vector2) for p in points]))
-        self.append_raw([p.x for p in points], [p.y for p in points])
-        return self
+    def concat_points(self, points : iterable_t[Vector2] = None):
+        if not points:
+            return self
+        unzipper = ((v2.x, v2.y) for v2 in points)
+        (xs, ys) = zip(*unzipper)
+        return self.concat_raw(xs, ys)
 
-    def append_raw(self, xs, ys):
-        self._xs = np.append(self._xs, list(xs))
-        self._ys = np.append(self._ys, list(ys))
+    def concat_raw(self, xs, ys):
+        self._xs = np.append(self._xs, xs)
+        self._ys = np.append(self._ys, ys)
         return self
 
     def pen_up(self):
-        self.append_raw(np.nan, np.nan)
+        self.concat_raw(np.nan, np.nan)
 
-    def draw(self, ax=None, **kwargs):
+    # accessors
+
+    def draw(self, ax=None, x=0, y=0, **kwargs):
         ax = ax if ax else plt.subplot()
         ax.set_aspect('equal')
-        ax.plot(self._xs, self._ys, **kwargs)
+        ax.plot(self._xs + x, self._ys + y, **kwargs)
         return self
 
     def area(self):
@@ -273,42 +273,10 @@ class PolyLine2:
         a += cross
         return Vector2(cx, cy) / (3 * a)
 
-
-    def reverse(self):
-        self._xs = np.fliplr(self._xs)
-        self._ys = np.fliplr(self._ys)
-        return self
-
     def __add__(self, other : Vector2):
         new_polyline = PolyLine2()
-        new_polyline.append_raw(self._xs + other.x, self._ys + other.y)
+        new_polyline.concat_raw(self._xs + other.x, self._ys + other.y)
         return new_polyline
-
-class PolyLineSet2(Iterable):
-
-    def __init__(self, *polylines2):
-        self.polyline_set = set()
-        for polyline in polylines2:
-            self.add_polyline(polyline)
-
-    def add_polyline(self, polyline2):
-        assert(isinstance(polyline2, PolyLine2))
-        self.polyline_set.add(polyline2)
-
-    def draw(self, **kwargs):
-        for polyline in self.polyline_set:
-            polyline.draw(**kwargs)
-
-    def __add__(self, other : Vector2):
-        new_set = PolyLineSet2()
-        for polyline in self.polyline_set:
-            new_set.add_polyline(polyline + other)
-        return new_set
-
-    def __iter__(self):
-        return iter(self.polyline_set)
-
-
 
 class Arc2:
 
