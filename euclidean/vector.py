@@ -51,7 +51,10 @@ class Vector:
         return self * scalar
 
     def __truediv__(self, scalar):
+        if scalar == 0:
+            raise ValueError('div by zero')
         return self._new(self._coords / scalar)
+
 
     def __itruediv__(self, scalar):
         return self / scalar
@@ -96,7 +99,11 @@ class Vector2(Vector):
         return new_origin.rotate(angle) + point
 
     def angle(self, other):
-        return np.arccos(self.dot(other) / self.magnitude() / other.magnitude())
+        test = self.dot(other) / self.magnitude() / other.magnitude()
+        #print(test)
+        #if np.isclose(test, 1.0) or np.isnan(test):
+        #    raise ValueError()
+        return np.arccos(test)
 
     def polar(self):
         radius = self.magnitude()

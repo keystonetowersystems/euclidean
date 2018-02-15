@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from collections.abc import Iterable
+from typing import Iterable as iterable_t
 
 from .vector import Vector2
 
@@ -120,6 +120,9 @@ class LineSegment2:
         dist_diff = path_dist - self.length()
         return dist_diff < DEFAULT_EPSILON
 
+    def does_intersect_line_segment(self, line):
+        pass
+
     def intersect_line_segment(self, line_segment):
         point = self.intersect_line(line_segment.line())
         if point == None or point not in line_segment:
@@ -135,14 +138,16 @@ class LineSegment2:
     def intersect_circle(self, circle):
         return [p for p in circle.intersect_line(self.line()) if self.contains(p)]
 
-    def draw(self, **kwargs):
-        plt.plot([self._p1.x, self._p2.x], [self._p1.y, self._p2.y], **kwargs)
+    #def draw(self, **kwargs):
+    #    plt.plot([self._p1.x, self._p2.x], [self._p1.y, self._p2.y], **kwargs)
 
+    def draw(self, ax, **kwargs):
+        ax.plot([self._p1.x, self._p2.x], [self._p1.y, self._p2.y], **kwargs)
 
     def polyline(self, n=2):
         assert(n >= 2)
         polyline = PolyLine2()
-        polyline.append_raw(
+        polyline.concat_raw(
             np.linspace(self._p1.x, self._p2.x, n),
             np.linspace(self._p1.y, self._p2.y, n)
         )
@@ -201,35 +206,72 @@ class PolyLine2:
 
     __slots__ = ['_xs', '_ys']
 
-    def __init__(self, *points, dtype=np.float64):
-        self._xs = np.array([p.x for p in points], dtype=dtype)
-        self._ys = np.array([p.y for p in points], dtype=dtype)
+    def __init__(self, points : iterable_t[Vector2] = None, dtype=np.float64):
+        self.set(points, dtype)
+
+    def set(self, points : iterable_t[Vector2] = None, dtype=np.float64):
+        self._xs = np.array([], dtype=dtype)
+        self._ys = np.array([], dtype=dtype)
+        return self.concat_points(points)
+
+    def clear(self):
+        return self.set(dtype=self._xs.dtype)
+
+    def append(self, *points):
+        return self.concat_points(points)
 
     def concat(self, polyline):
-        assert(isinstance(polyline, PolyLine2))
         self._xs = np.append(self._xs, polyline._xs)
         self._ys = np.append(self._ys, polyline._ys)
         return self
 
-    def append(self, *points):
-        assert(all([isinstance(p, Vector2) for p in points]))
-        self.append_raw([p.x for p in points], [p.y for p in points])
-        return self
+    def concat_points(self, points : iterable_t[Vector2] = None):
+        if not points:
+            return self
+        unzipper = ((v2.x, v2.y) for v2 in points)
+        (xs, ys) = zip(*unzipper)
+        return self.concat_raw(xs, ys)
 
-    def append_raw(self, xs, ys):
+    def concat_raw(self, xs, ys):
         self._xs = np.append(self._xs, xs)
         self._ys = np.append(self._ys, ys)
         return self
 
-    def draw(self, **kwargs):
-        plt.axis('equal')
-        plt.plot(self._xs, self._ys, **kwargs)
+    def pen_up(self):
+        self.concat_raw(np.nan, np.nan)
+
+    # accessors
+
+    def draw(self, ax=None, x=0, y=0, **kwargs):
+        ax = ax if ax else plt.subplot()
+        ax.set_aspect('equal')
+        ax.plot(self._xs + x, self._ys + y, **kwargs)
         return self
 
     def area(self):
         # NOTE: THIS WILL ONLY WORK FOR A WELL FORMED SIMPLE POLYGON!
         return 0.5 * np.abs(np.dot(self._xs, np.roll(self._ys, 1)) - np.dot(self._ys, np.roll(self._xs, 1)))
 
+    def centroid(self):
+
+        #obviously will not work if not a well formed simple polygon with no nans
+        if len(self._xs) == 0:
+            return Vector2(0, 0)
+        #divisor = 3 * (np.dot(self._xs, np.roll(self._ys, 1)) - np.dot(self._ys, np.roll(self._xs, 1)))
+        #cx = np.add(self._xs + np.roll(self._xs))
+        (a, cx, cy) = (0, 0, 0)
+        (x_curr, y_curr) = (self._xs[0], self._ys[0])
+        for (x_next, y_next) in zip(self._xs[1:], self._ys[1:]):
+            cross = x_curr * y_next - x_next * y_curr
+            cx += (x_curr + x_next) * cross
+            cy += (y_curr + y_next) * cross
+            a += cross
+            (x_curr, y_curr) = x_next, y_next
+        cross = x_curr * self._ys[0] - self._xs[0] * y_curr
+        cx += (x_curr + self._xs[0]) * cross
+        cy += (y_curr + self._ys[0]) * cross
+        a += cross
+        return Vector2(cx, cy) / (3 * a)
     def length(self):
         path = np.transpose(np.vstack((self._xs, self._ys)))
         length = np.sum(np.sqrt(np.sum(np.diff(path, axis=0)**2, axis=1)))
@@ -242,34 +284,8 @@ class PolyLine2:
 
     def __add__(self, other : Vector2):
         new_polyline = PolyLine2()
-        new_polyline.append_raw(self._xs + other.x, self._ys + other.y)
+        new_polyline.concat_raw(self._xs + other.x, self._ys + other.y)
         return new_polyline
-
-class PolyLineSet2(Iterable):
-
-    def __init__(self, *polylines2):
-        self.polyline_set = set()
-        for polyline in polylines2:
-            self.add_polyline(polyline)
-
-    def add_polyline(self, polyline2):
-        assert(isinstance(polyline2, PolyLine2))
-        self.polyline_set.add(polyline2)
-
-    def draw(self, **kwargs):
-        for polyline in self.polyline_set:
-            polyline.draw(**kwargs)
-
-    def __add__(self, other : Vector2):
-        new_set = PolyLineSet2()
-        for polyline in self.polyline_set:
-            new_set.add_polyline(polyline + other)
-        return new_set
-
-    def __iter__(self):
-        return iter(self.polyline_set)
-
-
 
 class Arc2:
 

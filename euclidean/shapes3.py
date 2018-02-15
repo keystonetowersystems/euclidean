@@ -1,10 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+from typing import Callable as callable_t
+from typing import Iterable as iterable_t
+
 from collections.abc import Iterable
 
+
 from .vector import Vector3, Vector2
-from .shapes2 import PolyLine2,PolyLineSet2
+from .shapes2 import PolyLine2
 
 class TruncatedCone:
 
@@ -34,73 +38,81 @@ class PolyLine3:
 
     __slots__ = ['_xs', '_ys', '_zs']
 
-    def __init__(self, *points, dtype=np.float64):
-        self._xs = np.array([p.x for p in points], dtype=dtype)
-        self._ys = np.array([p.y for p in points], dtype=dtype)
-        self._zs = np.array([p.z for p in points], dtype=dtype)
+    def __init__(self, points : iterable_t[Vector3] = None, dtype=np.float64):
+        self.set(points, dtype)
 
-    def _points(self):
-        return zip(self._xs, self._ys, self._zs)
+    # mutating methods
 
-    def project_xz(self, predicate=lambda p: True):
-        polyline2 = PolyLine2()
-        indices = [predicate(Vector3(x, y, z)) for (x, y, z) in self._points()]
-        polyline2.append_raw(self._xs[indices], self._zs[indices])
-        return polyline2
+    def set(self, points : iterable_t[Vector3] = None, dtype=np.float64):
+        self._xs = np.array([], dtype=dtype)
+        self._ys = np.array([], dtype=dtype)
+        self._zs = np.array([], dtype=dtype)
+        return self.concat_points(points)
 
-    def filter(self, predicate=lambda p: True):
-        indices = [predicate(Vector3(x, y, z) for (x, y, z) in self._points())]
-        self._xs = self._xs[indices]
-        self._ys = self._ys[indices]
-        self._zs = self._zs[indices]
-        return self
+    def clear(self):
+        return self.set(None, dtype=self._xs.dtype)
+
+    def pen_up(self):
+        return self.concat_raw(np.nan, np.nan, np.nan)
+
+    def append(self, *points):
+        return self.concat_points(points)
 
     def concat(self, polyline):
-        assert(isinstance(polyline, PolyLine3))
-        return self.append_raw(polyline._xs, polyline._ys, polyline._zs)
+        return self.concat_raw(polyline._xs, polyline._ys, polyline._zs)
 
-    def append_raw(self, xs, ys, zs):
+    def concat_points(self, points : iterable_t[Vector3] = None):
+        if not points:
+            return self
+        unzipper = ((p.x, p.y, p.z) for p in points)
+        (xs, ys, zs) = zip(*unzipper)
+        return self.concat_raw(xs, ys, zs)
+
+    def concat_raw(self, xs, ys, zs):
         self._xs = np.append(self._xs, xs)
         self._ys = np.append(self._ys, ys)
         self._zs = np.append(self._zs, zs)
         return self
 
-    def append(self, *points):
-        return self.append_raw(
-            (p.x for p in points),
-            (p.y for p in points),
-            (p.z for p in points)
-        )
+    # accessor methods
 
-    def clear(self):
-        self._xs = np.array([], dtype=self._xs.dtype)
-        self._ys = np.array([], dtype=self._ys.dtype)
-        self._zs = np.array([], dtype=self._zs.dtype)
+    def points_raw(self):
+        return zip(self._xs, self._ys, self._zs)
+
+    def points(self):
+        return (Vector3(x, y, z) for (x, y, z) in self.points_raw())
+
+    def filter(self, predicate : callable_t[[Vector3], bool]):
+        indices = [predicate(v3) for v3 in self.points()]
+        filtered = PolyLine3()
+        filtered._xs = self._xs[indices]
+        filtered._ys = self._ys[indices]
+        filtered._zs = self._zs[indices]
+        return filtered
 
     def empty(self):
         return len(self._xs) == 0
 
-    def draw(self, **kwargs):
-        plt.plot(self._xs, self._ys, self._zs, **kwargs)
+    def project(self, transform : callable_t[[Vector3], Vector2]):
+        transformed = [transform(v3) for v3 in self.points()]
+        return PolyLine2(transformed)
 
-class PolyLineSet3(Iterable):
+    def partition(self, predicate : callable_t[[Vector3], bool], insert_nan=True):
+        pl_true = PolyLine3()
+        pl_false = PolyLine3()
+        if self.empty():
+            return (pl_false, pl_true)
 
-    def __init__(self, *polylines3):
-        self.polyline_set = set()
-        for polyline in polylines3:
-            self.add_polyline(polyline)
-
-    def add_polyline(self, polyline):
-        assert(isinstance(polyline, PolyLine3))
-        self.polyline_set.add(polyline)
-
-    def project_xz(self, predicate=lambda p: True):
-        polyline_set = PolyLineSet2()
-        for polyline in self.polyline_set:
-            polyline_set.add_polyline(polyline.project_xz(predicate))
-        return polyline_set
-
-    def __iter__(self):
-        return iter(self.polyline_set)
-
-
+        last_result = predicate(Vector3(self._xs[0], self._ys[0], self._zs[0]))
+        for v3 in self.points():
+            result = predicate(v3)
+            if result:
+                pl_true.append(v3)
+                if not last_result and insert_nan:
+                    pl_false.pen_up()
+            else:
+                pl_false.append(v3)
+                if last_result and insert_nan:
+                    pl_true.pen_up()
+            last_result = result
+        return (pl_false, pl_true)
