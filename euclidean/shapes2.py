@@ -258,6 +258,12 @@ class PolyLine2:
         ax.plot(self._xs + x, self._ys + y, **kwargs)
         return self
 
+    def first(self):
+        return Vector2(self._xs[0], self._ys[0])
+
+    def last(self):
+        return Vector2(self._xs[-1], self._ys[-1])
+
     def area(self):
         # NOTE: THIS WILL ONLY WORK FOR A WELL FORMED SIMPLE POLYGON!
         return 0.5 * np.abs(np.dot(self._xs, np.roll(self._ys, 1)) - np.dot(self._ys, np.roll(self._xs, 1)))
