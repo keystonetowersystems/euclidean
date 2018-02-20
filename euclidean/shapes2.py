@@ -240,6 +240,16 @@ class PolyLine2:
     def pen_up(self):
         self.concat_raw(np.nan, np.nan)
 
+    def __add__(self, other: Vector2):
+        self._xs += other.x
+        self._ys += other.y
+        return self
+
+    def __sub__(self, other: Vector2):
+        self._xs -= other.x
+        self._ys -= other.y
+        return self
+
     # accessors
 
     def draw(self, ax=None, x=0, y=0, **kwargs):
@@ -273,10 +283,6 @@ class PolyLine2:
         a += cross
         return Vector2(cx, cy) / (3 * a)
 
-    def __add__(self, other : Vector2):
-        new_polyline = PolyLine2()
-        new_polyline.concat_raw(self._xs + other.x, self._ys + other.y)
-        return new_polyline
 
 class Arc2:
 
