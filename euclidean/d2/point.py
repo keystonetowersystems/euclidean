@@ -7,6 +7,12 @@ from typing import List
 from euclidean.options import epsilon
 from euclidean.vector import Vector2
 
+def internal_angle(a : Vector2, b : Vector2, c : Vector2):
+    v1 = a - b
+    v2 = c - b
+    dp = v1.dot(v2)
+    return np.arccos(dp / (v1.magnitude() * v2.magnitude()))
+
 def orientation(a : Vector2, b : Vector2, c : Vector2) -> int:
     """
     Determine if the orientation of A->B->C is processing CW, CCW, or is colinear
