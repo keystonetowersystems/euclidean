@@ -272,6 +272,7 @@ class PolyLine2:
         cy += (y_curr + self._ys[0]) * cross
         a += cross
         return Vector2(cx, cy) / (3 * a)
+
     def length(self):
         path = np.transpose(np.vstack((self._xs, self._ys)))
         length = np.sum(np.sqrt(np.sum(np.diff(path, axis=0)**2, axis=1)))
@@ -281,6 +282,31 @@ class PolyLine2:
         self._xs = np.fliplr(self._xs)
         self._ys = np.fliplr(self._ys)
         return self
+
+    def _apply_vector_op(self, op, *params):
+        new_xs = []
+        new_ys = []
+        for x,y in zip(self._xs,self._ys):
+            v = Vector2(x,y)
+            z = getattr(v,op)(*params)
+            new_xs.append(z.x)
+            new_ys.append(z.y)
+        self._xs = np.array(new_xs)
+        self._ys = np.array(new_ys)
+        return self
+
+    def rotate(self, angle):
+        return self._apply_vector_op('rotate',angle)
+
+    def rotate_around(self, point, angle):
+        return self._apply_vector_op('rotate_around', point, angle)
+
+    def translate(self, distance: Vector2):
+        return self._apply_vector_op('__add__', distance)
+
+    def scale(self, factor):
+        return self._apply_vector_op('__mul__', factor)
+
 
     def __add__(self, other : Vector2):
         new_polyline = PolyLine2()

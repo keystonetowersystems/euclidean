@@ -59,6 +59,9 @@ class Vector:
     def __itruediv__(self, scalar):
         return self / scalar
 
+    def __hash__(self):
+        return hash(tuple([*self._coords]))
+
     def coords(self):
         return self._coords.copy()
 
