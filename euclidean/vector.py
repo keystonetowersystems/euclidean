@@ -27,6 +27,26 @@ class Vector:
             return False
         return (self._coords == other._coords).all()
 
+    def __ge__(self, other):
+        if not isinstance(other, Vector):
+            return False
+        return (self._coords >= other._coords).all()
+
+    def __gt__(self, other):
+        if not isinstance(other, Vector):
+            return False
+        return (self._coords > other._coords).all()
+
+    def __le__(self, other):
+        if not isinstance(other, Vector):
+            return False
+        return (self._coords <= other._coords).all()
+
+    def __lt__(self, other):
+        if not isinstance(other, Vector):
+            return False
+        return (self._coords < other._coords).all()
+
     def __neg__(self):
         return self._new(-self._coords)
 
