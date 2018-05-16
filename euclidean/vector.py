@@ -25,7 +25,8 @@ class Vector:
     def __eq__(self, other):
         if not isinstance(other, Vector):
             return False
-        return (self._coords == other._coords).all()
+        return np.isclose(self._coords, other._coords).all()
+        #return (self._coords == other._coords).all()
 
     def __ge__(self, other):
         if not isinstance(other, Vector):

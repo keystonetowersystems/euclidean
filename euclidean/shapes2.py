@@ -240,6 +240,16 @@ class PolyLine2:
     def pen_up(self):
         self.concat_raw(np.nan, np.nan)
 
+    def __add__(self, other: Vector2):
+        self._xs += other.x
+        self._ys += other.y
+        return self
+
+    def __sub__(self, other: Vector2):
+        self._xs -= other.x
+        self._ys -= other.y
+        return self
+
     # accessors
 
     def draw(self, ax=None, x=0, y=0, **kwargs):
@@ -247,6 +257,12 @@ class PolyLine2:
         ax.set_aspect('equal')
         ax.plot(self._xs + x, self._ys + y, **kwargs)
         return self
+
+    def first(self):
+        return Vector2(self._xs[0], self._ys[0])
+
+    def last(self):
+        return Vector2(self._xs[-1], self._ys[-1])
 
     def area(self):
         # NOTE: THIS WILL ONLY WORK FOR A WELL FORMED SIMPLE POLYGON!
