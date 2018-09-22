@@ -1,5 +1,5 @@
 import numbers
-import numpy as np
+import math
 
 from euclidean.vector import v_magnitude, v_angle
 
@@ -35,14 +35,11 @@ class V2(Cartesian2):
     __slots__ = ()
 
     def dot(self, other):
-        if isinstance(other, V2):
-            return self.x * other.x + self.y * other.y
-        raise TypeError('Expected: V2; Actual: %s' % type(other))
+        return self.x * other.x + self.y * other.y
 
     def cross(self, other):
-        if isinstance(other, V2):
-            return self.x * other.y - self.y * other.x
-        raise TypeError('Expected: V2; Actual: %s' % type(other))
+        return self.x * other.y - self.y * other.x
+
 
     def is_parallel(self, other):
         return self.cross(other) == 0
@@ -56,20 +53,18 @@ class V2(Cartesian2):
     __abs__ = magnitude
 
     def angle(self, other):
-        if isinstance(other, V2):
-            return v_angle(self, other)
-        return TypeError('Expected: V2; Actual %s' % type(other))
+        return v_angle(self, other)
 
     def __add__(self, other):
         if isinstance(other, V2):
-            return V2(self.x + other.x, self.y * other.y)
+            return V2(self.x + other.x, self.y + other.y)
         return NotImplemented
 
     __iadd__ = __add__
 
     def __sub__(self, other):
         if isinstance(other, V2):
-            return V2(self.x - other.x, self.y * other.y)
+            return V2(self.x - other.x, self.y - other.y)
         return NotImplemented
 
     __isub__ = __sub__
@@ -87,6 +82,11 @@ class V2(Cartesian2):
         return NotImplemented
 
     __itruediv__ = __truediv__
+
+    def rotate(self, radians):
+        cos = math.cos(radians)
+        sin = math.sin(radians)
+        return V2(self.x * cos - self.y * sin, self.x * sin + self.y * cos)
 
 class P2(Cartesian2):
     __slots__ = ()
@@ -121,4 +121,8 @@ class P2(Cartesian2):
     def vector(self):
         return V2(self.x, self.y)
 
+    def rotate(self, radians, center_point=None):
+        center_point = center_point if center_point else P2(0, 0)
+        vector = self - center_point
+        return center_point + vector.rotate(radians)
 
