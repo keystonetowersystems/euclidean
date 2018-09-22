@@ -28,6 +28,9 @@ class Cartesian2:
     def __repr__(self):
         return '%s(%r, %r)' % (self.__class__.__name__, self.x, self.y)
 
+    def __hash__(self):
+        return hash((self.__class__.__name__, self._coords))
+
 class V2(Cartesian2):
     __slots__ = ()
 
@@ -84,7 +87,6 @@ class V2(Cartesian2):
         return NotImplemented
 
     __itruediv__ = __truediv__
-
 
 class P2(Cartesian2):
     __slots__ = ()
