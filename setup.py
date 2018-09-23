@@ -9,7 +9,7 @@ setup(
     author_email='greg@keystonetowersystems.com',
     packages=find_packages(exclude=('tests',)),
     install_requires=[
-        'numpy>=1.12.1'
+        'sortedcontainers>=2'
     ],
     zip_safe=False
 )
