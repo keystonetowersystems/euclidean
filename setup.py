@@ -9,7 +9,9 @@ setup(
     author_email='greg@keystonetowersystems.com',
     packages=find_packages(exclude=('tests',)),
     install_requires=[
-        'sortedcontainers>=2'
+        'sortedcontainers>=2',
+        'multipledispatch>=0.6',
+        'fuzzyfloat>=1.0.0.dev1'
     ],
     zip_safe=False
 )
