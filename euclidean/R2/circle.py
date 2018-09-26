@@ -61,3 +61,11 @@ class Circle:
         offset = h * V2(other.center.y - self.center.y, other.center.x - self.center.x) / v_mag
         return (intersect_center + offset, intersect_center - offset)
 
+    def __contains__(self, point):
+        if isinstance(point, P2):
+            vector = point - self.center
+            return vector.magnitude() <= self.radius
+        if point is None:
+            return False
+        return NotImplemented
+
