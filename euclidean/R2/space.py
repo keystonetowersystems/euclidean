@@ -1,8 +1,6 @@
 import numbers
 import math
 
-from euclidean.vector import v_magnitude, v_angle
-
 class Cartesian2:
     __slots__ = ( '_coords', )
 
@@ -40,7 +38,6 @@ class V2(Cartesian2):
     def cross(self, other):
         return self.x * other.y - self.y * other.x
 
-
     def is_parallel(self, other):
         return self.cross(other) == 0
 
@@ -53,7 +50,7 @@ class V2(Cartesian2):
     __abs__ = magnitude
 
     def angle(self, other):
-        return v_angle(self, other)
+        return math.acos(self.dot(other) / self.magnitude() / other.magnitude())
 
     def __add__(self, other):
         if isinstance(other, V2):
@@ -83,6 +80,13 @@ class V2(Cartesian2):
 
     __itruediv__ = __truediv__
 
+    def __floordiv__(self, other):
+        if isinstance(other, numbers.Real):
+            return V2(self.x // other, self.y // other)
+        return NotImplemented
+
+    __ifloordiv__ = __floordiv__
+
     def rotate(self, radians):
         cos = math.cos(radians)
         sin = math.sin(radians)
@@ -109,7 +113,7 @@ class P2(Cartesian2):
             return P2(self.x + other.x, self.y * other.y)
         return NotImplemented
 
-    __iadd__ = __radd__ = __add__
+    __iadd__ = __add__
 
     def __sub__(self, other):
         if isinstance(other, V2):
@@ -117,6 +121,8 @@ class P2(Cartesian2):
         if isinstance(other, P2):
             return V2(self.x - other.x, self.y - other.y)
         return NotImplemented
+
+    __isub__ = __sub__
 
     def vector(self):
         return V2(self.x, self.y)
