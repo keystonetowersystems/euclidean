@@ -10,6 +10,23 @@ class Line:
         c = dx * p1.y - dy * p1.x
         return Line(-dy, dx, c)
 
+    @staticmethod
+    def _Normalized(cx, cy, c):
+        if c == 0:
+            if cx == 0 and cy == 0:
+                raise ValueError()
+            elif cx == 0:
+                return (0, 1, 0)
+            elif cy == 0:
+                return (1, 0, 0)
+            else:
+                return (cx / cy, 1, 0)
+        return (cx / c, cy / c, 1)
+
+    _cx = property(lambda self: self._coeffs[0])
+    _cy = property(lambda self: self._coeffs[1])
+    _c  = property(lambda self: self._coeffs[2])
+
     def __init__(self, cx, cy, c):
         """
         cx * x + cy * y = c
@@ -19,9 +36,16 @@ class Line:
             c:
         """
         assert(cx != 0 or cy != 0)
-        self._cx = cx
-        self._cy = cy
-        self._c = c
+        self._coeffs = Line._Normalized(cx, cy, c)
+
+    def translate(self, vector):
+        cx = self._cx * (self._c + self._cy * vector.y)
+        cy = self._cy * (self._c + self._cx * vector.x)
+        c = self._c ** 2
+        c += self._cx * self._c * vector.x
+        c += self._cy * self._c * vector.y
+        c += self._cx * self._cy * vector.x * vector.y
+        return Line(cx, cy, c)
 
     def x(self, y):
         """Find the corresponding x coordinate on the line for coordinate y
@@ -92,11 +116,13 @@ class Line:
     def __contains__(self, point):
         if isinstance(point, P2):
             return self._cx * point.x + self._cy * point.y ==  self._c
+        if point is None:
+            return False
         return NotImplemented
 
     def __eq__(self, other):
         if isinstance(other, Line):
-            return self._cx == other._cx and self._cy == other._cy and self._c == other._c
+            return self._coeffs == other._coeffs
         return NotImplemented
 
     def __ne__(self, other):
@@ -129,6 +155,19 @@ class LineSegment:
     def ordered(self):
         return (self._p1, self._p2) if self._p1._coords < self._p2._coords else (self._p2, self._p1)
 
+    def translate(self, vector):
+        return LineSegment(self._p1 + vector, self._p2 + vector)
+
+    def center(self):
+        return self._p1 + self.vector() / 2
+
+    def rotate(self, radians, around_point=None):
+        around_point = around_point if around_point else self.center()
+        return LineSegment(
+            self._p1.rotate(radians, around_point),
+            self._p2.rotate(radians, around_point)
+        )
+
     def __contains__(self, point):
         if isinstance(point, P2):
             line_vector = self.vector()
@@ -136,6 +175,8 @@ class LineSegment:
             if not line_vector.is_parallel(test_vector):
                 return False
             return 0 <= line_vector.dot(test_vector) <= line_vector.dot(line_vector)
+        if point is None:
+            return False
         return NotImplemented
 
     def __eq__(self, other):
