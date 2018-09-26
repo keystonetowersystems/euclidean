@@ -20,9 +20,22 @@ class Polygon:
     def __init__(self, points):
         self._points = tuple(points)
         assert(len(self._points) >= 3)
+        self._min_index = _min_idx(self._points)
+
+
+    def standard_form(self):
+        """Normalize point order to begin traversal from minimum point.
+
+        #todo: also detect if CW -> iterate backwards, ie. CCW?
+        #todo: make this the default __iter__ method?
+
+        Returns:
+
+        """
+        return self._rolled(self._min_index)
 
     def _rolled(self, offset):
-        return chain(self._points[offset:], self._points[:offset])
+        return _rolled(self._points, offset)
 
     def _cross_products(self):
         return map(V2.cross, self._points, self._rolled(1))
@@ -122,3 +135,23 @@ class Polygon:
                         wn -= 1
         return wn
 
+    def __eq__(self, other):
+        if len(self._points) != len(other._points):
+            return False
+        for p1, p2 in zip(self.standard_form(), other.standard_form()):
+            if p1 != p2:
+                return False
+        return True
+
+def _rolled(points, offset):
+    return chain(points[offset:], points[:offset])
+
+def _standard_form(points):
+    return tuple(_rolled(points, _min_idx(points)))
+
+def _min_idx(points):
+    min_idx = 0
+    for idx, point in enumerate(points):
+        if point._coords < points[min_idx]._coords:
+            min_idx = idx
+    return min_idx
