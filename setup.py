@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='euclidean',
-    version='1.0.0.dev1',
+    version='1.0.0b1',
     description='Euclidean geometry library',
     url='https://github.com/keystonetowersystems/euclidean',
     author='Keystone Tower Systems',
