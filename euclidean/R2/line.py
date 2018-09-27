@@ -1,3 +1,5 @@
+from euclidean.util import normalize_coefficients
+
 from .space import P2, V2
 
 
@@ -9,19 +11,6 @@ class Line:
         dy = p2.y - p1.y
         c = dx * p1.y - dy * p1.x
         return Line(-dy, dx, c)
-
-    @staticmethod
-    def _Normalized(cx, cy, c):
-        if c == 0:
-            if cx == 0 and cy == 0:
-                raise ValueError()
-            elif cx == 0:
-                return (0, 1, 0)
-            elif cy == 0:
-                return (1, 0, 0)
-            else:
-                return (cx / cy, 1, 0)
-        return (cx / c, cy / c, 1)
 
     _cx = property(lambda self: self._coeffs[0])
     _cy = property(lambda self: self._coeffs[1])
@@ -35,8 +24,7 @@ class Line:
             cy:
             c:
         """
-        assert (cx != 0 or cy != 0)
-        self._coeffs = Line._Normalized(cx, cy, c)
+        self._coeffs = normalize_coefficients(cx, cy, c)
 
     def translate(self, vector):
         cx = self._cx * (self._c + self._cy * vector.y)
