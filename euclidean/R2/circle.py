@@ -10,13 +10,14 @@ from euclidean.constants import pi
 
 from .space import P2, V2
 
+
 class Circle:
 
     center = property(lambda self: self._center)
     radius = property(lambda self: self._radius)
     diameter = property(lambda self: 2 * self._radius)
 
-    def __init__(self, radius, center=P2(0,0)):
+    def __init__(self, radius, center=P2(0, 0)):
         """
 
         (x - center.x) ** 2 + (y - center.y) ** 2 = radius ** 2
@@ -41,14 +42,14 @@ class Circle:
             raise TypeError()
 
         if self == other:
-            return None # what should this case return?
+            return None  # what should this case return?
 
         vector = other.center - self.center
         v_mag = vector.magnitude()
         if v_mag > self.radius + other.radius:
-            return None # separate
+            return None  # separate
         if v_mag < abs(self.radius - other.radius):
-            return None #contained
+            return None  # contained
 
         apothem = (self.radius ** 2 - other.radius ** 2 + v_mag ** 2) / (2 * v_mag)
 
@@ -68,4 +69,3 @@ class Circle:
         if point is None:
             return False
         return NotImplemented
-

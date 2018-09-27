@@ -11,6 +11,7 @@ from euclidean.R2.line import LineSegment
 from .hull import convex_hull
 from .line_sweep import shamos_hoey
 
+
 class Polygon:
 
     @classmethod
@@ -19,9 +20,8 @@ class Polygon:
 
     def __init__(self, points):
         self._points = tuple(points)
-        assert(len(self._points) >= 3)
+        assert (len(self._points) >= 3)
         self._min_index = _min_idx(self._points)
-
 
     def standard_form(self):
         """Normalize point order to begin traversal from minimum point.
@@ -106,7 +106,7 @@ class Polygon:
         return (p.y for p in self._points)
 
     def is_convex(self):
-        #todo:
+        # todo:
         pass
 
     def is_simple(self):
@@ -143,11 +143,14 @@ class Polygon:
                 return False
         return True
 
+
 def _rolled(points, offset):
     return chain(points[offset:], points[:offset])
 
+
 def _standard_form(points):
     return tuple(_rolled(points, _min_idx(points)))
+
 
 def _min_idx(points):
     min_idx = 0

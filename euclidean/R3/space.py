@@ -1,9 +1,11 @@
-import math, numbers
+import math
+import numbers
 
 from euclidean.R2.space import V2, P2
 
+
 class Cartesian3:
-    __slots__ = ( '_coords', )
+    __slots__ = ('_coords',)
 
     def __init__(self, x, y, z):
         self._coords = (x, y, z)

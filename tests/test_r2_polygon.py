@@ -109,7 +109,8 @@ def test_simple(ccw_polygon, cw_polygon):
     assert ccw_polygon.is_simple()
     assert cw_polygon.is_simple()
 
-def test_intersecting(ccw_intersecting, ccw_polygon):
+
+def test_intersecting(ccw_intersecting, cw_intersecting):
     assert not ccw_intersecting.is_simple()
     assert not cw_intersecting.is_simple()
 
@@ -141,6 +142,7 @@ def test_cw_area(cw_polygon):
 def test_ccw_area(ccw_polygon):
     assert ccw_polygon.area() == 1
 
+
 def test_jarvis_convex_hull():
     points = [
         P2(0, 3),
@@ -155,6 +157,7 @@ def test_jarvis_convex_hull():
     expected = [P2(0, 0), P2(3, 0), P2(3, 3), P2(0, 3)]
     for a, e in zip(_jarvis_convex_hull(points), expected):
         assert a == e
+
 
 def test_convex_hull(hull_data):
     (point_cloud, hull) = hull_data

@@ -34,8 +34,8 @@ def test_create_from_points():
 def test_degenerate_cases():
     vert = Line.ByPoints(P2(1, 1), P2(1, -1))
 
-    assert vert.y(1) == None
-    assert vert.y(-100) == None
+    assert vert.y(1) is None
+    assert vert.y(-100) is None
     assert vert.x(-1) == 1
     assert vert.x(1) == 1
     assert vert.x(-100) == 1
@@ -48,10 +48,10 @@ def test_degenerate_cases():
     assert horz.y(-100) == 0
     assert horz.y(100) == 0
 
-    assert horz.x(-1) == None
-    assert horz.x(1) == None
-    assert horz.x(-100) == None
-    assert horz.x(100) == None
+    assert horz.x(-1) is None
+    assert horz.x(1) is None
+    assert horz.x(-100) is None
+    assert horz.x(100) is None
 
 
 def test_intersection():
@@ -60,8 +60,8 @@ def test_intersection():
 
     assert horz.intersection(vert), P2(10, 10)
 
-    assert horz.intersection(horz) == None
-    assert horz.intersection(Line.ByPoints(P2(-1, 0), P2(1, 0))) == None
+    assert horz.intersection(horz) is None
+    assert horz.intersection(Line.ByPoints(P2(-1, 0), P2(1, 0))) is None
 
     l45 = Line.ByPoints(P2(0, 0), P2(1, 1))
     assert horz.intersection(l45) == P2(10, 10)

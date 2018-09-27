@@ -1,8 +1,9 @@
 import numbers
 import math
 
+
 class Cartesian2:
-    __slots__ = ( '_coords', )
+    __slots__ = ('_coords',)
 
     coords = property(lambda self: self._coords)
 
@@ -28,6 +29,7 @@ class Cartesian2:
 
     def __hash__(self):
         return hash((self.__class__.__name__, self._coords))
+
 
 class V2(Cartesian2):
     __slots__ = ()
@@ -92,6 +94,7 @@ class V2(Cartesian2):
         sin = math.sin(radians)
         return V2(self.x * cos - self.y * sin, self.x * sin + self.y * cos)
 
+
 class P2(Cartesian2):
     __slots__ = ()
 
@@ -131,4 +134,3 @@ class P2(Cartesian2):
         center_point = center_point if center_point else P2(0, 0)
         vector = self - center_point
         return center_point + vector.rotate(radians)
-

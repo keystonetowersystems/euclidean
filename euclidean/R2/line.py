@@ -1,5 +1,5 @@
-
 from .space import P2, V2
+
 
 class Line:
 
@@ -25,7 +25,7 @@ class Line:
 
     _cx = property(lambda self: self._coeffs[0])
     _cy = property(lambda self: self._coeffs[1])
-    _c  = property(lambda self: self._coeffs[2])
+    _c = property(lambda self: self._coeffs[2])
 
     def __init__(self, cx, cy, c):
         """
@@ -35,7 +35,7 @@ class Line:
             cy:
             c:
         """
-        assert(cx != 0 or cy != 0)
+        assert (cx != 0 or cy != 0)
         self._coeffs = Line._Normalized(cx, cy, c)
 
     def translate(self, vector):
@@ -115,7 +115,7 @@ class Line:
 
     def __contains__(self, point):
         if isinstance(point, P2):
-            return self._cx * point.x + self._cy * point.y ==  self._c
+            return self._cx * point.x + self._cy * point.y == self._c
         if point is None:
             return False
         return NotImplemented
@@ -139,10 +139,11 @@ class Line:
             )
         raise TypeError()
 
+
 class LineSegment:
 
     def __init__(self, p1, p2):
-        assert(p1 != p2)
+        assert (p1 != p2)
         self._p1 = p1
         self._p2 = p2
 

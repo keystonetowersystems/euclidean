@@ -1,10 +1,12 @@
 from euclidean.R2.space import P2
 
+
 def convex_hull(points):
     if len(points) < 3:
         return None
     points = sorted(points, key=lambda p: p._coords)
     return _jarvis_convex_hull(points)
+
 
 def _jarvis_convex_hull(points):
     """Find the convex hull of a point cloud using the jarvis march algorithm.
@@ -35,6 +37,7 @@ def _jarvis_convex_hull(points):
         if last_idx == 0:
             return hull
 
+
 def _divide_and_conquer_convex_hull(points):
     """
 
@@ -60,11 +63,14 @@ def _divide_and_conquer_convex_hull(points):
 
     return _merge_convex_hulls(min_hull, max_hull)
 
+
 def _merge_convex_hulls(left_hull, right_hull):
     pass
 
+
 def _min_tangent(min_hull, max_hull):
     pass
+
 
 def _max_tangent(min_hull, max_hull):
     pass
