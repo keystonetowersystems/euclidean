@@ -21,7 +21,7 @@ setup(
         'matplotlib>=3',
         'sortedcontainers>=2',
         'multipledispatch>=0.6',
-        'fuzzyfloat>=1.0.1',
+        'fuzzyfloat>=1.0.3',
     ],
     zip_safe=False
 )

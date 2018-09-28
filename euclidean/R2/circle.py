@@ -1,10 +1,6 @@
-"""
-
-shapes define an arbitrary 2d geometry but not embedded in any particular space
-
-"""
-
 import numbers
+
+from fuzzyfloat import rel_fp
 
 from euclidean.constants import pi
 
@@ -17,7 +13,7 @@ class Circle:
     radius = property(lambda self: self._radius)
     diameter = property(lambda self: 2 * self._radius)
 
-    def __init__(self, radius, center=P2(0, 0)):
+    def __init__(self, radius, center=P2(0, 0), c_type=rel_fp):
         """
 
         (x - center.x) ** 2 + (y - center.y) ** 2 = radius ** 2
@@ -29,7 +25,7 @@ class Circle:
 
         assert(radius > 0)
         self._center = center
-        self._radius = radius
+        self._radius = c_type(radius)
 
     def circumference(self):
         return pi * self.diameter

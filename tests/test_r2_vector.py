@@ -103,20 +103,20 @@ def test_orthogonal():
 def test_rotate():
     v1 = V2(1, 0)
     v1 = v1.rotate(eta)
-    assert v1.x == pytest.approx(0)
-    assert v1.y == pytest.approx(1)
+    assert v1.x == 0
+    assert v1.y == 1
 
     v1 = v1.rotate(eta)
-    assert v1.x == pytest.approx(-1)
-    assert v1.y == pytest.approx(0)
+    assert v1.x == -1
+    assert v1.y == 0
 
     v1 = v1.rotate(eta)
-    assert v1.x == pytest.approx(0)
-    assert v1.y == pytest.approx(-1)
+    assert v1.x == 0
+    assert v1.y == -1
 
     v1 = v1.rotate(eta)
-    assert v1.x == pytest.approx(1)
-    assert v1.y == pytest.approx(0)
+    assert v1.x == 1
+    assert v1.y == 0
 
 
 def test_p2():

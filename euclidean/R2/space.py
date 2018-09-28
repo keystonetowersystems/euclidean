@@ -1,6 +1,10 @@
 import numbers
 import math
 
+from fuzzyfloat import rel_fp
+
+from euclidean.util import wrap_args
+
 
 class Cartesian2:
     __slots__ = ('_coords',)
@@ -10,8 +14,8 @@ class Cartesian2:
     x = property(lambda self: self._coords[0])
     y = property(lambda self: self._coords[1])
 
-    def __init__(self, x, y):
-        self._coords = (x, y)
+    def __init__(self, x, y, c_type=rel_fp):
+        self._coords = wrap_args(c_type, x, y)
 
     def __iter__(self):
         return iter(self._coords)
@@ -20,9 +24,6 @@ class Cartesian2:
         if isinstance(other, type(self)):
             return self._coords == other._coords
         return NotImplemented
-
-    def __complex__(self):
-        return complex(self.x, self.y)
 
     def __repr__(self):
         return '%s(%r, %r)' % (self.__class__.__name__, self.x, self.y)

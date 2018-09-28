@@ -1,4 +1,6 @@
-from euclidean.util import normalize_coefficients
+from fuzzyfloat import rel_fp
+
+from euclidean.util import normalize_coefficients, wrap_args
 
 from .space import P2, V2
 
@@ -16,7 +18,7 @@ class Line:
     _cy = property(lambda self: self._coeffs[1])
     _c = property(lambda self: self._coeffs[2])
 
-    def __init__(self, cx, cy, c):
+    def __init__(self, cx, cy, c, c_type=rel_fp):
         """
         cx * x + cy * y = c
         Args:
@@ -24,7 +26,7 @@ class Line:
             cy:
             c:
         """
-        self._coeffs = normalize_coefficients(cx, cy, c)
+        self._coeffs = wrap_args(c_type, *normalize_coefficients(cx, cy, c))
 
     def translate(self, vector):
         cx = self._cx * (self._c + self._cy * vector.y)
