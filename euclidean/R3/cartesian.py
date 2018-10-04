@@ -1,11 +1,11 @@
 import math
 import numbers
 
-from euclidean.R2.space import V2, P2
+from euclidean.R2.cartesian import V2
 
 
 class Cartesian3:
-    __slots__ = ('_coords',)
+    __slots__ = ("_coords",)
 
     def __init__(self, x, y, z):
         self._coords = (x, y, z)
@@ -18,7 +18,7 @@ class Cartesian3:
         return iter(self._coords)
 
     def __repr__(self):
-        return '%s(%r, %r, %r)' % (self.__class__.__name__, self.x, self.y, self.z)
+        return "%s(%r, %r, %r)" % (self.__class__.__name__, self.x, self.y, self.z)
 
     def __eq__(self, other):
         if isinstance(other, type(self)):
@@ -36,7 +36,7 @@ class V3(Cartesian3):
         return V3(
             self.y * other.z - self.z * other.y,
             self.z * other.x - self.x * other.z,
-            self.x * other.y - self.y * other.z
+            self.x * other.y - self.y * other.x,
         )
 
     def magnitude(self):
@@ -59,6 +59,12 @@ class V3(Cartesian3):
     def yz(self):
         return V2(self.y, self.z)
 
+    def manhattan_distance(self):
+        return sum(self._coords)
+
+    def approx(self, other, atol=1e-6):
+        return abs(self - other) <= atol
+
     def __add__(self, other):
         if isinstance(other, V3):
             return V3(self.x + other.x, self.y + other.y, self.z + other.z)
@@ -78,15 +84,22 @@ class V3(Cartesian3):
             return V3(self.x * other, self.y * other, self.z * other)
         return NotImplemented
 
+    __imul__ = __rmul__ = __mul__
+
     def __truediv__(self, other):
         if isinstance(other, numbers.Real):
             return V3(self.x / other, self.y / other, self.z / other)
         return NotImplemented
 
+    __itruediv__ = __truediv__
+
     def __floordiv__(self, other):
         if isinstance(other, numbers.Real):
             return V3(self.x // other, self.y // other, self.z // other)
         return NotImplemented
+
+    def __neg__(self):
+        return V3(-self.x, -self.y, -self.z)
 
 
 class P3(Cartesian3):

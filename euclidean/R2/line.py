@@ -1,12 +1,9 @@
-from fuzzyfloat import rel_fp
+from euclidean.util import normalize_coefficients
 
-from euclidean.util import normalize_coefficients, wrap_args
-
-from .space import P2, V2
+from .cartesian import P2, V2
 
 
 class Line:
-
     @staticmethod
     def ByPoints(p1, p2):
         dx = p2.x - p1.x
@@ -18,7 +15,7 @@ class Line:
     _cy = property(lambda self: self._coeffs[1])
     _c = property(lambda self: self._coeffs[2])
 
-    def __init__(self, cx, cy, c, c_type=rel_fp):
+    def __init__(self, cx, cy, c):
         """
         cx * x + cy * y = c
         Args:
@@ -26,7 +23,7 @@ class Line:
             cy:
             c:
         """
-        self._coeffs = wrap_args(c_type, *normalize_coefficients(cx, cy, c))
+        self._coeffs = normalize_coefficients(cx, cy, c)
 
     def translate(self, vector):
         cx = self._cx * (self._c + self._cy * vector.y)
@@ -74,9 +71,11 @@ class Line:
         Returns:
             (Line):
         """
-        if test_point in self:
+        if self.contains(test_point):
             return None
-        return Line(-self._cy, self._cx, self._cx * test_point.y - self._cy * test_point.x)
+        return Line(
+            -self._cy, self._cx, self._cx * test_point.y - self._cy * test_point.x
+        )
 
     def parallel(self, test_point):
         """Find the line parallel to this line, passing through test_point.
@@ -87,7 +86,9 @@ class Line:
         Returns:
             (Line):
         """
-        return Line(self._cx, self._cy, self._cx * test_point.x + self._cy * test_point.y)
+        return Line(
+            self._cx, self._cy, self._cx * test_point.x + self._cy * test_point.y
+        )
 
     def closest(self, test_point):
         """Find the point on the line closest to the test_point.
@@ -103,12 +104,10 @@ class Line:
         perpendicular = self.perpendicular(test_point)
         return self.intersection(perpendicular) if perpendicular else test_point
 
-    def __contains__(self, point):
+    def contains(self, point, atol=1e-6):
         if isinstance(point, P2):
-            return self._cx * point.x + self._cy * point.y == self._c
-        if point is None:
-            return False
-        return NotImplemented
+            return abs(self._cx * point.x + self._cy * point.y - self._c) <= atol
+        return False
 
     def __eq__(self, other):
         if isinstance(other, Line):
@@ -119,21 +118,22 @@ class Line:
         return not self == other
 
     def intersection(self, other):
-        if isinstance(other, Line):
-            det = self._cx * other._cy - self._cy * other._cx
-            if det == 0:
-                return None
-            return P2(
-                (other._cy * self._c - self._cy * other._c) / det,
-                (self._cx * other._c - other._cx * self._c) / det
-            )
-        raise TypeError()
+        if not isinstance(other, Line):
+            raise TypeError()
+
+        det = self._cx * other._cy - self._cy * other._cx
+        if det == 0:
+            return None
+        return P2(
+            (other._cy * self._c - self._cy * other._c) / det,
+            (self._cx * other._c - other._cx * self._c) / det,
+        )
 
 
 class LineSegment:
-
     def __init__(self, p1, p2):
-        assert (p1 != p2)
+        if p1 == p2:
+            raise ValueError("Points must be independent to define a line segment.")
         self._p1 = p1
         self._p2 = p2
 
@@ -144,7 +144,11 @@ class LineSegment:
         return self.vector().magnitude()
 
     def ordered(self):
-        return (self._p1, self._p2) if self._p1._coords < self._p2._coords else (self._p2, self._p1)
+        return (
+            (self._p1, self._p2)
+            if self._p1._coords < self._p2._coords
+            else (self._p2, self._p1)
+        )
 
     def translate(self, vector):
         return LineSegment(self._p1 + vector, self._p2 + vector)
@@ -156,19 +160,18 @@ class LineSegment:
         around_point = around_point if around_point else self.center()
         return LineSegment(
             self._p1.rotate(radians, around_point),
-            self._p2.rotate(radians, around_point)
+            self._p2.rotate(radians, around_point),
         )
 
-    def __contains__(self, point):
-        if isinstance(point, P2):
-            line_vector = self.vector()
-            test_vector = point - self._p1
-            if not line_vector.is_parallel(test_vector):
-                return False
-            return 0 <= line_vector.dot(test_vector) <= line_vector.dot(line_vector)
-        if point is None:
+    def contains(self, point):
+        if not isinstance(point, P2):
             return False
-        return NotImplemented
+
+        line_vector = self.vector()
+        test_vector = point - self._p1
+        if not line_vector.is_parallel(test_vector):
+            return False
+        return 0 <= line_vector.dot(test_vector) <= line_vector.dot(line_vector)
 
     def __eq__(self, other):
         if isinstance(other, LineSegment):
@@ -182,16 +185,20 @@ class LineSegment:
         return Line.ByPoints(self._p1, self._p2)
 
     def intersection(self, other):
-        if not isinstance(other, LineSegment):
-            raise TypeError()
         if not self.does_intersect(other):
             return None
         return self.line().intersection(other.line())
 
     def does_intersect(self, other):
-        if P2.CCW(self._p1, self._p2, other._p1) * P2.CCW(self._p1, self._p2, other._p2) > 0:
+        if not isinstance(other, LineSegment):
+            raise TypeError()
+        ccw1 = P2.CCW(self._p1, self._p2, other._p1)
+        ccw2 = P2.CCW(self._p1, self._p2, other._p2)
+        if ccw1 * ccw2 > 0:
             return False
-        if P2.CCW(other._p1, other._p2, self._p1) * P2.CCW(other._p1, other._p2, self._p2) > 0:
+        ccw1 = P2.CCW(other._p1, other._p2, self._p1)
+        ccw2 = P2.CCW(other._p1, other._p2, self._p2)
+        if ccw1 * ccw2 > 0:
             return False
         return True
 
@@ -199,7 +206,7 @@ class LineSegment:
         return hash(self.ordered())
 
     def __str__(self):
-        return '(%s, %s)' % (self._p1, self._p2)
+        return "(%s, %s)" % (self._p1, self._p2)
 
     def __repr__(self):
-        return 'LineSegment(%r, %r)' % (self._p1, self._p2)
+        return "LineSegment(%r, %r)" % (self._p1, self._p2)

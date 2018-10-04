@@ -1,11 +1,6 @@
-import numpy as np
-import operator
-
 from itertools import chain
-from collections import deque
 
-from euclidean.constants import tau
-from euclidean.R2.space import P2, V2
+from euclidean.R2.cartesian import P2, V2, cross2
 from euclidean.R2.line import LineSegment
 
 from .hull import convex_hull
@@ -13,14 +8,13 @@ from .line_sweep import shamos_hoey
 
 
 class Polygon:
-
     @classmethod
     def ConvexHull(cls, points):
         return cls(convex_hull(points))
 
     def __init__(self, points):
         self._points = tuple(points)
-        assert (len(self._points) >= 3)
+        assert len(self._points) >= 3
         self._min_index = _min_idx(self._points)
 
     def standard_form(self):
@@ -38,7 +32,7 @@ class Polygon:
         return _rolled(self._points, offset)
 
     def _cross_products(self):
-        return map(V2.cross, self._points, self._rolled(1))
+        return map(cross2, self._points, self._rolled(1))
 
     def area(self):
         """Find the area of this polygon.
@@ -64,7 +58,7 @@ class Polygon:
         """
         cx, cy, a = 0, 0, 0
         for p1, p2 in zip(self._points, self._rolled(1)):
-            cross = V2.cross(p1, p2)
+            cross = cross2(p1, p2)
             cx += (p1.x + p2.x) * cross
             cy += (p1.y + p2.y) * cross
             a += cross

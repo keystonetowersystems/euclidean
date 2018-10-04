@@ -3,17 +3,19 @@ from multipledispatch import dispatch
 from .line import Line, LineSegment
 from .circle import Circle
 from .polygon import Polygon
-from .space import P2
+from .cartesian import P2, V2
 
 
 @dispatch(Line, Line)
 def intersect(line_1, line_2):
-    return line_1.intersect(line_2)
+    point = line_1.intersection(line_2)
+    return {point} if point else set()
 
 
 @dispatch(LineSegment, LineSegment)
 def intersect(line_segment_1, line_segment_2):
-    return line_segment_1.intersection(line_segment_2)
+    point = line_segment_1.intersection(line_segment_2)
+    return {point} if point else set()
 
 
 @dispatch(Line, LineSegment)
@@ -86,9 +88,9 @@ def intersect(circle, polygon):
 
 def line_line_segment_intersection(line, line_segment):
     point = line.intersection(line_segment.line())
-    if point in line_segment:
-        return point
-    return None
+    if line_segment.contains(point):
+        return {point}
+    return set()
 
 
 def line_circle_intersection(line, circle):
@@ -107,20 +109,24 @@ def line_circle_intersection(line, circle):
     discriminant = circle.radius ** 2 * dr2 - determinant ** 2
     x0 = determinant * dv.y / dr2
     y0 = -determinant * dv.x / dr2
+
+    central = P2(x0, y0) + vector
+
     if discriminant <= 0:
-        return (P2(x0, y0) + vector,)
+        return {central}
 
     sqrt_descriminant = discriminant ** 0.5
     sign_y = 1 if dv.y > 0 else 0 if dv.y == 0 else -1
     x_off = sign_y * dv.x * sqrt_descriminant / dr2
     y_off = abs(dv.y) * sqrt_descriminant / dr2
+    offset = V2(x_off, y_off)
 
-    return (P2(x0 + x_off, y0 + y_off) + vector, P2(x0 - x_off, y0 - y_off) + vector)
+    return {central + offset, central - offset}
 
 
 def line_segment_circle_intersection(line_segment, circle):
     points = intersect(line_segment.line(), circle)
-    return tuple(p for p in points if p in line_segment)
+    return set(p for p in points if line_segment.contains(p))
 
 
 def circle_circle_intersection(circle_1, circle_2):
@@ -135,4 +141,4 @@ def polygon_intersection(polygon, other):
         if edge_result is not None:
             points.append(edge_result)
 
-    return points
+    return set(points)

@@ -29,6 +29,3 @@ def normalize_coefficients(*coefficients):
         raise ValueError("All coefficients are 0.")
 
     return tuple(normalized)
-
-def wrap_args(wrapper_type, *args, container=tuple):
-    return container(wrapper_type(value) for value in args)

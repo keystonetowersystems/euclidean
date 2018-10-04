@@ -21,7 +21,9 @@ def shamos_hoey(edges):
 
     count = len(event_queue) / 2
 
-    sweep_line = SortedListWithKey(key=lambda event: tuple(p._coords for p in event[EDGE].ordered()))
+    sweep_line = SortedListWithKey(
+        key=lambda event: tuple(p._coords for p in event[EDGE].ordered())
+    )
 
     def consecutive(e1, e2):
         distance = abs(e1[IDX] - e2[IDX])
@@ -41,14 +43,18 @@ def shamos_hoey(edges):
                         return False
             if idx > 0:
                 below = sweep_line[idx - 1]
-                if not consecutive(event, below) and event[EDGE].does_intersect(below[EDGE]):
+                if not consecutive(event, below) and event[EDGE].does_intersect(
+                    below[EDGE]
+                ):
                     return False
         else:
             idx = sweep_line.bisect_left(event)
             if 0 < idx < len(sweep_line) - 1:
                 above = sweep_line[idx]
                 below = sweep_line[idx - 1]
-                if not consecutive(above, below) and above[EDGE].does_intersect(below[EDGE]):
+                if not consecutive(above, below) and above[EDGE].does_intersect(
+                    below[EDGE]
+                ):
                     return False
             sweep_line.pop(idx)
 

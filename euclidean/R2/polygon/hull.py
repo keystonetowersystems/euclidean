@@ -1,4 +1,4 @@
-from euclidean.R2.space import P2
+from euclidean.R2.cartesian import P2
 
 
 def convex_hull(points):

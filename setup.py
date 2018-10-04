@@ -1,27 +1,27 @@
 from setuptools import setup, find_packages
 
+INSTALL_REQUIRES = [
+    "sortedcontainers>=2",
+    "multipledispatch>=0.6",
+    "numpy",
+    "matplotlib",
+]
+EXTRAS_REQUIRE = {
+    "docs": [],
+    "tests": ["pytest", "coverage"],
+    "siquant": ["siquant==4.0.0b5"],
+}
+
 setup(
-    name='euclidean',
-    version='1.0.0b1',
-    description='Euclidean geometry library',
-    url='https://github.com/keystonetowersystems/euclidean',
-    author='Keystone Tower Systems',
-    author_email='greg@keystonetowersystems.com',
-    packages=find_packages(exclude=('tests',)),
-    setup_requires=[
-        "tox>=3",
-        "coverage>=4"
-    ],
-    tests_require=[
-        "pytest",
-        "pytest-cov"
-    ],
-    install_requires=[
-        'numpy>=1.14',
-        'matplotlib>=3',
-        'sortedcontainers>=2',
-        'multipledispatch>=0.6',
-        'fuzzyfloat>=1.0.3',
-    ],
-    zip_safe=False
+    name="euclidean",
+    version="1.0.0b1",
+    description="Euclidean Geometry Library",
+    url="https://github.com/keystonetowersystems/euclidean",
+    author="Keystone Tower Systems",
+    author_email="greg@keystonetowersystems.com",
+    packages=find_packages(exclude=("tests",)),
+    setup_requires=["tox>=3"],
+    extras_require=EXTRAS_REQUIRE,
+    install_requires=INSTALL_REQUIRES,
+    zip_safe=False,
 )
