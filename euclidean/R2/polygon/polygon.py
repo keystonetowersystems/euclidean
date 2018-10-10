@@ -68,14 +68,14 @@ class Polygon:
     def translate(self, vector):
         return Polygon(p + vector for p in self._points)
 
-    def center(self, new_center_point):
+    def centered_at(self, new_center_point):
         """Copy this polygon centered at the provided point.
 
         Returns:
             (Polygon):
         """
         vector = new_center_point - self.centroid()
-        return Polygon(p - vector for p in self._points)
+        return Polygon(p + vector for p in self._points)
 
     def rotate(self, radians, center_point=None):
         """Rotate the polygon by radians around a center point or the centroid if none is provided.

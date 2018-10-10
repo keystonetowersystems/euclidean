@@ -1,6 +1,6 @@
 import pytest
 
-from euclidean.R2 import P2, Polygon
+from euclidean.R2 import P2, Polygon, V2
 
 from euclidean.R2.polygon.polygon import _standard_form
 from euclidean.R2.polygon.hull import _jarvis_convex_hull, convex_hull
@@ -83,6 +83,22 @@ def hull_data():
     ]
 
     return (point_cloud, hull)
+
+
+def test_polygon_translate(cw_polygon, ccw_polygon):
+    assert P2(0.5, 0.5) == cw_polygon.centroid()
+    assert P2(1.5, 1.5) == cw_polygon.translate(V2(1, 1)).centroid()
+    assert P2(0.5, 0.5) == ccw_polygon.centroid()
+    assert P2(1.5, 1.5) == ccw_polygon.translate(V2(1, 1)).centroid()
+
+
+def test_polygon_centered_at(cw_polygon, ccw_polygon):
+    assert P2(10, 10) == cw_polygon.centered_at(P2(10, 10)).centroid()
+
+    assert P2(0, 0) == cw_polygon.centered_at(P2(0, 0)).centroid()
+    assert P2(1, 1) == cw_polygon.centered_at(P2(1, 1)).centroid()
+    assert P2(0, 0) == ccw_polygon.centered_at(P2(0, 0)).centroid()
+    assert P2(1, 1) == ccw_polygon.centered_at(P2(1, 1)).centroid()
 
 
 def test_simple(ccw_polygon, cw_polygon):
