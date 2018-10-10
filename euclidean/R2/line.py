@@ -163,13 +163,13 @@ class LineSegment:
             self._p2.rotate(radians, around_point),
         )
 
-    def contains(self, point):
+    def contains(self, point, atol=1e-6):
         if not isinstance(point, P2):
-            return False
+            raise TypeError()
 
         line_vector = self.vector()
         test_vector = point - self._p1
-        if not line_vector.is_parallel(test_vector):
+        if not line_vector.is_parallel(test_vector, atol):
             return False
         return 0 <= line_vector.dot(test_vector) <= line_vector.dot(line_vector)
 

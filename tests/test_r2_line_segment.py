@@ -79,12 +79,19 @@ def test_line_segment_contains():
 
     assert ls.contains(P2(5, 5))
     assert ls.contains(P2(-10, -10))
+    assert ls.contains(P2(10, 10))
 
     assert not ls.contains(P2(-11, -11))
     assert not ls.contains(P2(11, 11))
     assert not ls.contains(P2(1, 0))
 
-    assert not ls.contains(None)
+    with pytest.raises(TypeError):
+        ls.contains(V2(10, 10))
+
+    ls = LineSegment(P2(0, 0), P2(9999999999.9, 9999999999.9))
+    assert ls.contains(P2(0, 0))
+    assert ls.contains(P2(9999999999.9, 9999999999.9))
+    assert not ls.contains(P2(9999999999.99, 9999999999.99))
 
 
 def test_line_segment_equality():

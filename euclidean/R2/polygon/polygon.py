@@ -8,14 +8,20 @@ from .line_sweep import shamos_hoey
 
 
 class Polygon:
+    """
+
+    """
+
     @classmethod
     def ConvexHull(cls, points):
-        return cls(convex_hull(points))
+        return cls(convex_hull(points), is_convex=True)
 
-    def __init__(self, points):
+    def __init__(self, points, is_convex=None):
         self._points = tuple(points)
-        assert len(self._points) >= 3
+        if len(self._points) < 3:
+            raise ValueError("At least 3 points are required to define a polygon.")
         self._min_index = _min_idx(self._points)
+        self.__is_convex = is_convex
 
     def standard_form(self):
         """Normalize point order to begin traversal from minimum point.
@@ -99,9 +105,18 @@ class Polygon:
     def ys(self):
         return (p.y for p in self._points)
 
+    def __ccws(self):
+        return map(P2.CCW, self._rolled(0), self._rolled(1), self._rolled(2))
+
+    def __maybe_convex(self):
+        return all(c <= 0 for c in self.__ccws()) or all(c >= 0 for c in self.__ccws())
+
     def is_convex(self):
-        # todo:
-        pass
+        if self.__is_convex is None:
+            self.__is_convex = len(self._points) < 4 or (
+                self.__maybe_convex() and self.is_simple()
+            )
+        return self.__is_convex
 
     def is_simple(self):
         return shamos_hoey(self.edges())
@@ -109,11 +124,16 @@ class Polygon:
     def edges(self):
         return map(LineSegment, self._points, chain(self._points[1:], self._points[:1]))
 
-    def __contains__(self, test_point):
-        return self.winding_number(test_point) > 0
+    def contains(self, test_point, atol=1e-6):
+        return self.winding_number(test_point) > 0 or self.on_perimeter(
+            test_point, atol
+        )
 
     def perimeter(self):
         return sum(edge.length() for edge in self.edges())
+
+    def on_perimeter(self, point, atol=1e-6):
+        return any(edge.contains(point, atol) for edge in self.edges())
 
     def winding_number(self, test_point):
         order = sum(self._cross_products())

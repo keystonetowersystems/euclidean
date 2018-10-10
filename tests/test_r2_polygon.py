@@ -7,6 +7,8 @@ from euclidean.R2 import P2, Polygon, V2
 from euclidean.R2.polygon.polygon import _standard_form
 from euclidean.R2.polygon.hull import _jarvis_convex_hull, convex_hull
 
+from euclidean.approx import ApproxSet
+
 
 @pytest.fixture
 def ccw_polygon():
@@ -26,6 +28,11 @@ def ccw_intersecting():
 @pytest.fixture
 def cw_intersecting():
     return Polygon([P2(0, 0), P2(1, 1), P2(1, 0), P2(0, 1)])
+
+
+@pytest.fixture
+def cw_concave():
+    return Polygon([P2(-1, -1), P2(1, -1), P2(0, 0), P2(1, 1), P2(-1, 1)])
 
 
 @pytest.fixture
@@ -87,8 +94,13 @@ def hull_data():
     return (point_cloud, hull)
 
 
-def test_polygon_eq(cw_polygon, ccw_polygon):
+def test_polygon_create():
 
+    with pytest.raises(ValueError):
+        Polygon([P2(0, 0), P2(20, 20)])
+
+
+def test_polygon_eq(cw_polygon, ccw_polygon):
     assert cw_polygon == cw_polygon
     assert cw_polygon != ccw_polygon  # we may want to fix this
     assert not cw_polygon == None
@@ -113,9 +125,8 @@ def test_polygon_centered_at(cw_polygon, ccw_polygon):
 
 def test_polygon_rotate(cw_polygon):
     rotated = cw_polygon.rotate(math.pi / 2, P2(0, 0))
-    expected = {P2(0.0, 0.0), P2(0.0, 1.0), P2(-1.0, 1.0), P2(-1.0, 0.0)}
-    for actual_p in rotated.points():
-        assert any(expect_p.approx(actual_p) for expect_p in expected)
+    expected = ApproxSet({P2(0.0, 0.0), P2(0.0, 1.0), P2(-1.0, 1.0), P2(-1.0, 0.0)})
+    assert expected == rotated.points()
 
 
 def test_polygon_perimiter(cw_polygon):
@@ -133,15 +144,40 @@ def test_intersecting(ccw_intersecting, cw_intersecting):
 
 
 def test_ccw_polygon_contains(ccw_polygon):
-    assert P2(0.5, 0.5) in ccw_polygon
-    assert P2(2, 2) not in ccw_polygon
-    assert P2(-1, -1) not in ccw_polygon
+    assert ccw_polygon.contains(P2(0.5, 0.5))
+    assert not ccw_polygon.contains(P2(2, 2))
+    assert not ccw_polygon.contains(P2(-1, -1))
 
 
 def test_cw_polygon_contains(cw_polygon):
-    assert P2(0.5, 0.5) in cw_polygon
-    assert P2(2, 2) not in cw_polygon
-    assert P2(-1, -1) not in cw_polygon
+    assert cw_polygon.contains(P2(0.5, 0.5))
+    assert not cw_polygon.contains(P2(2, 2))
+    assert not cw_polygon.contains(P2(-1, -1))
+
+    assert cw_polygon.contains(P2(0.00001, 0.00001))
+    assert cw_polygon.contains(P2(0.99999, 0.00001))
+    assert cw_polygon.contains(P2(0.99999, 0.99999))
+    assert cw_polygon.contains(P2(0.00001, 0.99999))
+
+    assert cw_polygon.contains(P2(0, 0))
+    assert cw_polygon.contains(P2(1, 0))
+    assert cw_polygon.contains(P2(1, 1))
+    assert cw_polygon.contains(P2(0, 1))
+
+    assert cw_polygon.contains(P2(0.5, 0))
+    assert cw_polygon.contains(P2(1, 0.5))
+    assert cw_polygon.contains(P2(0.5, 1))
+    assert cw_polygon.contains(P2(0, 0.5))
+
+    assert not cw_polygon.contains(P2(-0.00001, -0.00001))
+    assert not cw_polygon.contains(P2(1.00001, -0.00001))
+    assert not cw_polygon.contains(P2(1.00001, 1.00001))
+    assert not cw_polygon.contains(P2(-0.00001, 1.00001))
+
+    assert not cw_polygon.contains(P2(-0.0001, 0))
+    assert not cw_polygon.contains(P2(0, -0.00001))
+    assert not cw_polygon.contains(P2(1.00001, 0))
+    assert not cw_polygon.contains(P2(1, -0.00001))
 
 
 def test_ccw_polygon_centroid(ccw_polygon):
@@ -176,3 +212,14 @@ def test_convex_hull(hull_data):
 
     for a, e in zip(test_hull, data_hull):
         assert a == e
+
+    hull_poly = Polygon.ConvexHull(point_cloud)
+    for e, a in zip(data_hull, hull_poly.points()):
+        assert a == e
+
+
+def test_is_convex(cw_polygon, ccw_polygon, cw_intersecting, cw_concave):
+    assert cw_polygon.is_convex()
+    assert ccw_polygon.is_convex()
+    assert not cw_intersecting.is_convex()
+    assert not cw_concave.is_convex()
