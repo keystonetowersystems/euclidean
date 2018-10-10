@@ -1,3 +1,5 @@
+import math
+
 import pytest
 
 from euclidean.R2 import P2, Polygon, V2
@@ -85,6 +87,14 @@ def hull_data():
     return (point_cloud, hull)
 
 
+def test_polygon_eq(cw_polygon, ccw_polygon):
+
+    assert cw_polygon == cw_polygon
+    assert cw_polygon != ccw_polygon  # we may want to fix this
+    assert not cw_polygon == None
+    assert not cw_polygon == Polygon([P2(0, 0), P2(1, 1), P2(0, 1)])
+
+
 def test_polygon_translate(cw_polygon, ccw_polygon):
     assert P2(0.5, 0.5) == cw_polygon.centroid()
     assert P2(1.5, 1.5) == cw_polygon.translate(V2(1, 1)).centroid()
@@ -99,6 +109,17 @@ def test_polygon_centered_at(cw_polygon, ccw_polygon):
     assert P2(1, 1) == cw_polygon.centered_at(P2(1, 1)).centroid()
     assert P2(0, 0) == ccw_polygon.centered_at(P2(0, 0)).centroid()
     assert P2(1, 1) == ccw_polygon.centered_at(P2(1, 1)).centroid()
+
+
+def test_polygon_rotate(cw_polygon):
+    rotated = cw_polygon.rotate(math.pi / 2, P2(0, 0))
+    expected = {P2(0.0, 0.0), P2(0.0, 1.0), P2(-1.0, 1.0), P2(-1.0, 0.0)}
+    for actual_p in rotated.points():
+        assert any(expect_p.approx(actual_p) for expect_p in expected)
+
+
+def test_polygon_perimiter(cw_polygon):
+    assert 4 == cw_polygon.perimeter()
 
 
 def test_simple(ccw_polygon, cw_polygon):

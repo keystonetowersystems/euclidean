@@ -130,12 +130,17 @@ class Polygon:
         return wn
 
     def __eq__(self, other):
+        if not isinstance(other, Polygon):
+            return NotImplemented
         if len(self._points) != len(other._points):
             return False
         for p1, p2 in zip(self.standard_form(), other.standard_form()):
             if p1 != p2:
                 return False
         return True
+
+    def __ne__(self, other):
+        return not self == other
 
 
 def _rolled(points, offset):
