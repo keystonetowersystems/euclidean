@@ -2,8 +2,7 @@ import math
 
 import pytest
 
-from euclidean.R2.cartesian import P2, V2
-from euclidean.R2.circle import Circle
+from euclidean.R2 import P2, V2, Circle
 
 
 @pytest.fixture

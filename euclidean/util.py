@@ -29,3 +29,21 @@ def normalize_coefficients(*coefficients):
         raise ValueError("All coefficients are 0.")
 
     return tuple(normalized)
+
+
+def methods(*meths):
+    """A decorator for attaching generic methods to a class.
+
+    Args:
+        *meths:
+
+    Returns:
+
+    """
+
+    def decorator(cls):
+        for meth in meths:
+            setattr(cls, meth.__name__, meth)
+        return cls
+
+    return decorator

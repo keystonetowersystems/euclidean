@@ -5,7 +5,8 @@ from siquant import SIUnit, si, make
 from euclidean.constants import eta
 from euclidean.siquant.factory import make_factory, V2Quantity, V3Quantity
 
-from euclidean.R3.cartesian import V3, V2
+from euclidean.R2 import V2
+from euclidean.R3 import V3
 
 SIUnit.factory = make_factory(V2Quantity, V3Quantity)
 

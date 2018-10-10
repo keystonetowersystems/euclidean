@@ -6,7 +6,7 @@ from siquant import SIUnit, make, si
 
 from euclidean.siquant.factory import V2Quantity, make_factory
 
-from euclidean.R2.cartesian import V2
+from euclidean.R2 import V2
 
 SIUnit.factory = make_factory(V2Quantity)
 

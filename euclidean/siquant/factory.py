@@ -4,8 +4,7 @@ import euclidean.siquant.vector as v
 
 from euclidean.R2.cartesian import V2
 from euclidean.R3.cartesian import V3
-
-from .util import methods
+from euclidean.util import methods
 
 
 def make_factory(*quantity_types):

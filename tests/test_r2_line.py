@@ -1,6 +1,6 @@
 import pytest
 
-from euclidean.R2.line import Line, P2, V2
+from euclidean.R2 import Line, P2, V2
 
 
 def test_create():

@@ -1,8 +1,8 @@
 import pytest
 
-from euclidean.R2.cartesian import P2
-from euclidean.R2.polygon.polygon import Polygon, _standard_form
+from euclidean.R2 import P2, Polygon
 
+from euclidean.R2.polygon.polygon import _standard_form
 from euclidean.R2.polygon.hull import _jarvis_convex_hull, convex_hull
 
 

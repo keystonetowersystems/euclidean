@@ -2,7 +2,7 @@ import pytest
 
 from euclidean.constants import eta
 
-from euclidean.R2.cartesian import V2, P2
+from euclidean.R2 import V2
 
 
 def test_v2_polar():
@@ -128,6 +128,9 @@ def test_floordiv():
 
     v1 //= 2
     assert V2(0, 1).approx(v1)
+
+    with pytest.raises(TypeError):
+        v1 // None
 
 
 def test_angle():

@@ -2,9 +2,7 @@ import math
 
 import pytest
 
-
-from euclidean.R2.cartesian import P2, V2
-from euclidean.R2.line import LineSegment
+from euclidean.R2 import P2, V2, LineSegment
 
 
 def test_line_segment_create():

@@ -1,6 +1,8 @@
 import numbers
 import math
 
+from functools import total_ordering
+
 
 def cross2(v1, v2):
     return v1.x * v2.y - v1.y * v2.x
@@ -122,6 +124,7 @@ class V2(Cartesian2):
         return V2(-self.x, -self.y)
 
 
+@total_ordering
 class P2(Cartesian2):
     __slots__ = ()
 
@@ -157,12 +160,17 @@ class P2(Cartesian2):
             raise TypeError()
         return (self - other).magnitude() < atol
 
+    def __lt__(self, other):
+        if not isinstance(other, P2):
+            return NotImplemented
+        return self._coords < other._coords
+
     def __add__(self, other):
         if isinstance(other, V2):
             return P2(self.x + other.x, self.y + other.y)
         return NotImplemented
 
-    __iadd__ = __add__
+    __radd__ = __iadd__ = __add__
 
     def __sub__(self, other):
         if isinstance(other, V2):

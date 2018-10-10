@@ -1,6 +1,8 @@
 import math
 import numbers
 
+from functools import total_ordering
+
 from euclidean.R2.cartesian import V2
 
 
@@ -102,6 +104,7 @@ class V3(Cartesian3):
         return V3(-self.x, -self.y, -self.z)
 
 
+@total_ordering
 class P3(Cartesian3):
     __slots__ = ()
 
@@ -123,3 +126,8 @@ class P3(Cartesian3):
 
     def vector(self):
         return V3(self.x, self.y, self.z)
+
+    def __lt__(self, other):
+        if not isinstance(other, P3):
+            return NotImplemented
+        return self._coords < other._coords

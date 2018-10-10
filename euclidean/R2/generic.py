@@ -75,12 +75,12 @@ def intersect(line_segment, polygon):
 
 @dispatch(Polygon, Circle)
 def intersect(polygon, circle):
-    pass
+    raise NotImplementedError("todo")
 
 
 @dispatch(Circle, Polygon)
 def intersect(circle, polygon):
-    pass
+    raise NotImplementedError("todo")
 
 
 # implementations
@@ -116,7 +116,7 @@ def line_circle_intersection(line, circle):
         return {central}
 
     sqrt_descriminant = discriminant ** 0.5
-    sign_y = 1 if dv.y > 0 else 0 if dv.y == 0 else -1
+    sign_y = -1 if dv.y < 0 else 1
     x_off = sign_y * dv.x * sqrt_descriminant / dr2
     y_off = abs(dv.y) * sqrt_descriminant / dr2
     offset = V2(x_off, y_off)
@@ -134,11 +134,9 @@ def circle_circle_intersection(circle_1, circle_2):
 
 
 def polygon_intersection(polygon, other):
-    points = []
+    points = set()
 
     for edge in polygon.edges():
-        edge_result = intersect(edge, other)
-        if edge_result is not None:
-            points.append(edge_result)
+        points = points | intersect(edge, other)
 
-    return set(points)
+    return points
