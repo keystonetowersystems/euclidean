@@ -32,6 +32,8 @@ class V3(Cartesian3):
     __slots__ = ()
 
     def dot(self, other):
+        if not isinstance(other, V3):
+            raise TypeError()
         return self.x * other.x + self.y * other.y + self.z * other.z
 
     def cross(self, other):
@@ -113,7 +115,12 @@ class P3(Cartesian3):
             return P3(self.x + other.x, self.y + other.y, self.z + other.z)
         return NotImplemented
 
-    __iadd__ = __add__
+    __radd__ = __iadd__ = __add__
+
+    def approx(self, other, atol=1e-6):
+        if not isinstance(other, P3):
+            raise TypeError()
+        return abs(self - other) < atol
 
     def __sub__(self, other):
         if isinstance(other, V3):
@@ -121,8 +128,6 @@ class P3(Cartesian3):
         if isinstance(other, P3):
             return V3(self.x - other.x, self.y - other.y, self.z - other.z)
         return NotImplemented
-
-    __isub__ = __sub__
 
     def vector(self):
         return V3(self.x, self.y, self.z)
