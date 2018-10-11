@@ -4,6 +4,7 @@ import numbers
 from functools import total_ordering
 
 from euclidean.R2.cartesian import V2
+from euclidean.exceptions import unexpected_type_error
 
 
 class Cartesian3:
@@ -33,7 +34,7 @@ class V3(Cartesian3):
 
     def dot(self, other):
         if not isinstance(other, V3):
-            raise TypeError()
+            raise unexpected_type_error("other", V3, other)
         return self.x * other.x + self.y * other.y + self.z * other.z
 
     def cross(self, other):
@@ -67,6 +68,8 @@ class V3(Cartesian3):
         return sum(self._coords)
 
     def approx(self, other, atol=1e-6):
+        if not isinstance(other, V3):
+            raise unexpected_type_error("other", V3, other)
         return abs(self - other) <= atol
 
     def __add__(self, other):
@@ -119,7 +122,7 @@ class P3(Cartesian3):
 
     def approx(self, other, atol=1e-6):
         if not isinstance(other, P3):
-            raise TypeError()
+            raise unexpected_type_error("other", P3, other)
         return abs(self - other) < atol
 
     def __sub__(self, other):

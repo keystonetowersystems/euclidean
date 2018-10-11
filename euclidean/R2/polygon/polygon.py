@@ -124,10 +124,12 @@ class Polygon:
     def edges(self):
         return map(LineSegment, self._points, chain(self._points[1:], self._points[:1]))
 
-    def contains(self, test_point, atol=1e-6):
-        return self.winding_number(test_point) > 0 or self.on_perimeter(
-            test_point, atol
-        )
+    def contains(self, test_point, atol=1e-6, closed=True):
+        if self.winding_number(test_point) > 0:
+            return True
+        if closed:
+            return self.on_perimeter(test_point, atol)
+        return False
 
     def perimeter(self):
         return sum(edge.length() for edge in self.edges())

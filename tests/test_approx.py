@@ -22,6 +22,9 @@ def test_approx_set_contains():
 
     assert P2(0.1, 0.1) not in pset
 
+    assert P2(-1, -1) not in pset
+    assert P2(10, 10) not in pset
+
     with pytest.raises(TypeError):
         ApproxSet({V2(0, 0), V2(1, 1)})
 
@@ -35,4 +38,18 @@ def test_approx_set_eq():
     assert [P2(3.0000001, 3.0000001), P2(1, 1), P2(0, 0)] == pset
     assert (P2(0.0000001, 0.0000001), P2(1, 1), P2(3, 3)) == pset
 
+    assert pset == pset
+
     assert [P2(0, 0), P2(1, 1)] != pset
+
+    assert pset != set()
+
+    assert pset != None
+
+
+def test_approx_set_iter():
+
+    pset = ApproxSet([P2(3, 3), P2(2, 2), P2(1, 1)])
+
+    for e, a in zip([P2(1, 1), P2(2, 2), P2(3, 3)], pset):
+        assert e == a

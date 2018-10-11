@@ -3,6 +3,8 @@ import math
 
 from functools import total_ordering
 
+from euclidean.exceptions import unexpected_type_error
+
 
 def cross2(v1, v2):
     return v1.x * v2.y - v1.y * v2.x
@@ -50,12 +52,12 @@ class V2(Cartesian2):
 
     def dot(self, other):
         if not isinstance(other, V2):
-            raise TypeError()  # todo
+            raise unexpected_type_error("other", V2, other)
         return dot2(self, other)
 
     def cross(self, other):
         if not isinstance(other, V2):
-            raise TypeError()
+            raise unexpected_type_error("other", V2, other)
         return cross2(self, other)
 
     def is_parallel(self, other, atol=1e-6):
@@ -82,8 +84,8 @@ class V2(Cartesian2):
 
     def approx(self, other, atol=1e-6):
         if not isinstance(other, V2):
-            raise TypeError()
-        return (self - other).magnitude() < atol
+            raise unexpected_type_error("other", V2, other)
+        return abs(self - other) < atol
 
     def __add__(self, other):
         if isinstance(other, V2):
@@ -157,7 +159,7 @@ class P2(Cartesian2):
 
     def approx(self, other, atol=1e-6):
         if not isinstance(other, P2):
-            raise TypeError()
+            raise unexpected_type_error("other", P2, other)
         return (self - other).magnitude() < atol
 
     def __lt__(self, other):

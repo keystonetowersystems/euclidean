@@ -1,4 +1,5 @@
 from euclidean.util import normalize_coefficients
+from euclidean.exceptions import unexpected_type_error
 
 from .cartesian import P3, V3
 
@@ -24,7 +25,7 @@ class Plane:
 
     def _equation(self, point):
         if not isinstance(point, P3):
-            raise TypeError()
+            raise unexpected_type_error("point", P3, point)
         return self.cx * point.x + self.cy * point.y + self.cz * point.z
 
     def normal(self):

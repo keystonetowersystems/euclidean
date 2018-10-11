@@ -1,4 +1,5 @@
 from euclidean.constants import pi
+from euclidean.exceptions import unexpected_type_error
 
 from .cartesian import P2, V2
 
@@ -39,7 +40,7 @@ class Circle:
 
     def intersection(self, circle):
         if not isinstance(circle, Circle):
-            raise TypeError("Expected Type Circle.")
+            raise unexpected_type_error("circle", Circle, circle)
 
         if self == circle:
             raise ValueError("Test circles are identical.")

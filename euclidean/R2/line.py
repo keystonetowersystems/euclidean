@@ -1,4 +1,5 @@
 from euclidean.util import normalize_coefficients
+from euclidean.exceptions import unexpected_type_error
 
 from .cartesian import P2, V2
 
@@ -117,16 +118,16 @@ class Line:
     def __ne__(self, other):
         return not self == other
 
-    def intersection(self, other):
-        if not isinstance(other, Line):
-            raise TypeError()
+    def intersection(self, line):
+        if not isinstance(line, Line):
+            raise unexpected_type_error("line", Line, line)
 
-        det = self._cx * other._cy - self._cy * other._cx
+        det = self._cx * line._cy - self._cy * line._cx
         if det == 0:
             return None
         return P2(
-            (other._cy * self._c - self._cy * other._c) / det,
-            (self._cx * other._c - other._cx * self._c) / det,
+            (line._cy * self._c - self._cy * line._c) / det,
+            (self._cx * line._c - line._cx * self._c) / det,
         )
 
 
@@ -165,7 +166,7 @@ class LineSegment:
 
     def contains(self, point, atol=1e-6):
         if not isinstance(point, P2):
-            raise TypeError()
+            raise unexpected_type_error("point", P2, point)
 
         line_vector = self.vector()
         test_vector = point - self._p1
@@ -189,15 +190,15 @@ class LineSegment:
             return None
         return self.line().intersection(other.line())
 
-    def does_intersect(self, other):
-        if not isinstance(other, LineSegment):
-            raise TypeError()
-        ccw1 = P2.CCW(self._p1, self._p2, other._p1)
-        ccw2 = P2.CCW(self._p1, self._p2, other._p2)
+    def does_intersect(self, line_segment):
+        if not isinstance(line_segment, LineSegment):
+            raise unexpected_type_error("line_segment", LineSegment, line_segment)
+        ccw1 = P2.CCW(self._p1, self._p2, line_segment._p1)
+        ccw2 = P2.CCW(self._p1, self._p2, line_segment._p2)
         if ccw1 * ccw2 > 0:
             return False
-        ccw1 = P2.CCW(other._p1, other._p2, self._p1)
-        ccw2 = P2.CCW(other._p1, other._p2, self._p2)
+        ccw1 = P2.CCW(line_segment._p1, line_segment._p2, self._p1)
+        ccw2 = P2.CCW(line_segment._p1, line_segment._p2, self._p2)
         if ccw1 * ccw2 > 0:
             return False
         return True
