@@ -26,6 +26,9 @@ class Line:
         """
         self._coeffs = normalize_coefficients(cx, cy, c)
 
+    def _equation(self, point):
+        return self._cx * point.x + self._cy * point.y
+
     def translate(self, vector):
         cx = self._cx * (self._c + self._cy * vector.y)
         cy = self._cy * (self._c + self._cx * vector.x)
@@ -107,7 +110,7 @@ class Line:
 
     def contains(self, point, atol=1e-6):
         if isinstance(point, P2):
-            return abs(self._cx * point.x + self._cy * point.y - self._c) <= atol
+            return abs(self._equation(point) - self._c) <= atol
         return False
 
     def __eq__(self, other):
@@ -129,6 +132,20 @@ class Line:
             (line._cy * self._c - self._cy * line._c) / det,
             (self._cx * line._c - line._cx * self._c) / det,
         )
+
+    def on_side(self, point):
+        if self._cy == 0:
+            if point.x > self.x(0):
+                return 1
+            if point.x == self.x(0):
+                return 0
+            return -1
+
+        if point.y > self.y(point.x):
+            return 1
+        if point.y < self.y(point.x):
+            return -1
+        return 0
 
 
 class LineSegment:

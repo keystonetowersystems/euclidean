@@ -207,15 +207,17 @@ def test_jarvis_convex_hull():
 def test_convex_hull(hull_data):
     (point_cloud, hull) = hull_data
 
-    test_hull = _standard_form(convex_hull(point_cloud))
-    data_hull = _standard_form(hull)
+    # test_hull = _standard_form(convex_hull(point_cloud))
+    # data_hull = _standard_form(hull)
 
-    for a, e in zip(test_hull, data_hull):
-        assert a == e
+    assert Polygon(hull) == Polygon.ConvexHull(point_cloud)
 
-    hull_poly = Polygon.ConvexHull(point_cloud)
-    for e, a in zip(data_hull, hull_poly.points()):
-        assert a == e
+    # for a, e in zip(test_hull, data_hull):
+    #    assert a == e
+
+    # hull_poly = Polygon.ConvexHull(point_cloud)
+    # for e, a in zip(data_hull, hull_poly.points()):
+    #    assert a == e
 
 
 def test_is_convex(cw_polygon, ccw_polygon, cw_intersecting, cw_concave):
@@ -223,3 +225,7 @@ def test_is_convex(cw_polygon, ccw_polygon, cw_intersecting, cw_concave):
     assert ccw_polygon.is_convex()
     assert not cw_intersecting.is_convex()
     assert not cw_concave.is_convex()
+
+
+def est_convex_hull():
+    left = [P2(0, 0), P2(10, -1), P2(11, 3)]

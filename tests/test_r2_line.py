@@ -163,3 +163,28 @@ def test_line_intersection():
 
     with pytest.raises(TypeError):
         l1.intersection(None)
+
+
+def test_line_above():
+
+    horz = Line(0, 1, 10)
+
+    assert horz.on_side(P2(0, 20)) == 1
+    assert horz.on_side(P2(20, 20)) == 1
+
+    assert horz.on_side(P2(0, 10)) == 0
+
+    assert horz.on_side(P2(0, 0)) == -1
+
+    vert = Line(1, 0, 10)
+
+    assert vert.on_side(P2(0, 0)) == -1
+    assert vert.on_side(P2(20, 0)) == 1
+    assert vert.on_side(P2(10, 0)) == 0
+
+    sloped = Line(1, 1, 0)
+
+    assert sloped.on_side(P2(10, 10)) == 1
+    assert sloped.on_side(P2(-1, -1)) == -1
+    assert sloped.on_side(P2(-10, 20)) == 1
+    assert sloped.on_side(P2(-10, 10)) == 0

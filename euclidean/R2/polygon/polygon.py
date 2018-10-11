@@ -1,5 +1,7 @@
 from itertools import chain
 
+import matplotlib.pyplot as plt
+
 from euclidean.R2.cartesian import P2, V2, cross2
 from euclidean.R2.line import LineSegment
 
@@ -163,6 +165,13 @@ class Polygon:
 
     def __ne__(self, other):
         return not self == other
+
+    def plot(self, **kwargs):
+        xs = list(self.xs())
+        xs.append(xs[0])
+        ys = list(self.ys())
+        ys.append(ys[0])
+        return plt.plot(xs, ys, **kwargs)
 
 
 def _rolled(points, offset):

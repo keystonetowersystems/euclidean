@@ -53,3 +53,14 @@ def test_approx_set_iter():
 
     for e, a in zip([P2(1, 1), P2(2, 2), P2(3, 3)], pset):
         assert e == a
+
+
+def test_approx_set_create():
+
+    pset = ApproxSet([1, 2, 3, 3.0000001])
+
+    assert 3 == len(pset)
+    assert 3.0000001 in pset
+
+    with pytest.raises(TypeError):
+        ApproxSet(1, 2, 3)
