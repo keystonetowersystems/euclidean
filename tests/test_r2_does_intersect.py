@@ -76,11 +76,40 @@ def test_does_intersect_line_line_segment():
     assert not does_intersect(line, p_ls)
     assert not does_intersect(p_ls, line)
 
+    with pytest.raises(ValueError):
+        does_intersect(line, LineSegment(P2(0, 0), P2(0, 1)))
+
+
+def test_does_intersect_circle_line_segment():
+    circle = Circle(100)
+
+    ls_right = LineSegment(P2(50, 0), P2(150, 0))
+    assert does_intersect(circle, ls_right)
+    assert does_intersect(ls_right, circle)
+
+    ls_left = LineSegment(P2(-50, -50), P2(-100, -100))
+    assert does_intersect(circle, ls_left)
+    assert does_intersect(ls_left, circle)
+
+    ls_inside = LineSegment(P2(-25, -25), P2(25, 25))
+    assert not does_intersect(circle, ls_inside)
+    assert not does_intersect(ls_inside, circle)
+
+    ls_outside = LineSegment(P2(0, 175), P2(175, 0))
+    assert not does_intersect(circle, ls_outside)
+    assert not does_intersect(ls_outside, circle)
+
 
 def test_does_intersect_polygon_line(cw_polygon):
 
-    assert does_intersect(cw_polygon, Line(1, -1, 0))
-    assert not does_intersect(cw_polygon, Line(1, -1, 10))
+    l45 = Line(1, -1, 0)
+
+    assert does_intersect(cw_polygon, l45)
+    assert does_intersect(l45, cw_polygon)
+
+    l45_up10 = Line(1, -1, 10)
+    assert not does_intersect(cw_polygon, l45_up10)
+    assert not does_intersect(l45_up10, cw_polygon)
 
     assert does_intersect(cw_polygon, Line(1, 0, 0.5))
     assert not does_intersect(cw_polygon, Line(1, 0, -0.5))
@@ -89,5 +118,17 @@ def test_does_intersect_polygon_line(cw_polygon):
     assert not does_intersect(cw_polygon, Line(0, 1, -0.5))
 
 
-def test_does_intersect_polygon_line_segment():
-    pass
+def test_does_intersect_polygon_line_segment(cw_polygon):
+
+    ls_inside = LineSegment(P2(0.25, 0.25), P2(0.75, 0.75))
+
+    assert not does_intersect(cw_polygon, ls_inside)
+    assert not does_intersect(ls_inside, cw_polygon)
+
+    ls_x = LineSegment(P2(0.5, 0.5), P2(1, 1))
+    assert does_intersect(cw_polygon, ls_x)
+    assert does_intersect(ls_x, cw_polygon)
+
+    ls_outside = LineSegment(P2(-1, -1), P2(-1, 1))
+    assert not does_intersect(cw_polygon, ls_outside)
+    assert not does_intersect(ls_outside, cw_polygon)

@@ -88,7 +88,7 @@ def __does_intersect_circle_line(circle, line):
 
 
 def __does_intersect_circle_line_segment(circle, line_segment):
-    closest = line_segment.line().closest(circle).center()
+    closest = line_segment.line().closest(circle.center)
     p_min, p_max = line_segment.ordered()
     if closest > p_max:
         closest = p_max

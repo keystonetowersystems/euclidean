@@ -133,9 +133,10 @@ def test_polygon_perimiter(cw_polygon):
     assert 4 == cw_polygon.perimeter()
 
 
-def test_simple(ccw_polygon, cw_polygon):
+def test_polygon_simple(ccw_polygon, cw_polygon, cw_concave):
     assert ccw_polygon.is_simple()
     assert cw_polygon.is_simple()
+    assert cw_concave.is_simple()
 
 
 def test_intersecting(ccw_intersecting, cw_intersecting):
