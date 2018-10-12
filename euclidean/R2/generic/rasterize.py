@@ -1,3 +1,5 @@
+import math
+
 from multipledispatch import dispatch
 
 from euclidean.constants import tau
@@ -10,7 +12,7 @@ from euclidean.R2.polygon import Polygon
 
 @dispatch(LineSegment)
 def rasterize(line_segment, n=100):
-    step_vec = line_segment.vector() / n
+    step_vec = line_segment.vector() / (n - 1)
     return [line_segment._p1 + i * step_vec for i in range(n)]
 
 
@@ -23,8 +25,29 @@ def rasterize(circle, n=360):
 
 @dispatch(Polygon)
 def rasterize(polygon, n=1000):
-    raster = []
-    n_per_edge = n // len(polygon)
-    for edge in polygon.edges():
-        raster.extend(rasterize(edge, n_per_edge))
+    n = int(n)
+    assert n >= len(polygon)
+    poly_points = list(polygon.points())
+    poly_points.append(poly_points[0])
+    return __rasterize_points(poly_points, n)
+
+
+def __rasterize_points(points, n):
+    print(points)
+
+    count = len(points)
+    if count == 2:
+        (a, b) = points
+        return __rasterize_pair(a, b, n)
+
+    midpoint = count // 2
+    n1 = n // 2
+    raster = __rasterize_points(points[: midpoint + 1], n1)
+    raster.extend(__rasterize_points(points[midpoint:], n - n1))
     return raster
+
+
+def __rasterize_pair(p1, p2, n):
+    assert n >= 1
+    step_v = (p2 - p1) / n
+    return [p1 + i * step_v for i in range(n)]

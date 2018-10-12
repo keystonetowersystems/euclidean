@@ -67,7 +67,7 @@ def test_does_intersect_circle_circle():
 
 def test_does_intersect_line_line_segment():
     line = Line(1, 0, 0)
-    x_ls = LineSegment(P2(-1,0), P2(1, 0))
+    x_ls = LineSegment(P2(-1, 0), P2(1, 0))
     p_ls = LineSegment(P2(-1, -1), P2(-1, 1))
 
     assert does_intersect(line, x_ls)

@@ -23,6 +23,9 @@ class Polygon:
         self._min_index = _min_idx(self._points)
         self.__is_convex = is_convex
 
+    def __len__(self):
+        return len(self._points)
+
     def standard_form(self):
         """Normalize point order to begin traversal from minimum point.
 
