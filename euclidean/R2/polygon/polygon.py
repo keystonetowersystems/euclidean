@@ -1,7 +1,5 @@
 from itertools import chain
 
-import matplotlib.pyplot as plt
-
 from euclidean.R2.cartesian import P2, V2, cross2
 from euclidean.R2.line import LineSegment
 

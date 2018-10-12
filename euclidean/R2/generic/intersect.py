@@ -1,9 +1,9 @@
 from multipledispatch import dispatch
 
-from .line import Line, LineSegment
-from .circle import Circle
-from .polygon import Polygon
-from .cartesian import P2, V2
+from euclidean.R2.line import Line, LineSegment
+from euclidean.R2.circle import Circle
+from euclidean.R2.polygon import Polygon
+from euclidean.R2.cartesian import P2, V2
 
 
 @dispatch(Line, Line)

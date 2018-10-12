@@ -1,9 +1,6 @@
 from setuptools import setup, find_packages
 
-INSTALL_REQUIRES = [
-    "sortedcontainers>=2",
-    "multipledispatch>=0.6",
-]
+INSTALL_REQUIRES = ["sortedcontainers>=2", "multipledispatch>=0.6"]
 EXTRAS_REQUIRE = {
     "docs": [],
     "tests": ["pytest", "coverage"],
