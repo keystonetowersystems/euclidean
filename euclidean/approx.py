@@ -10,6 +10,19 @@ def approx(a, b, atol=1e-6):
 
 
 class ApproxSet(Set):
+    """A Set of approximable instances.
+
+    .. note::
+
+        In order for an item to be retained by this collection, it must support
+        a **total ordering**. Rather than hashing values for membership, items
+        are maintained in a sorted ordering to support log(n) membership testing.
+
+    :param iterable:
+    :param approx_fcn:
+
+    """
+
     def __init__(self, iterable, approx_fcn=approx):
         self.__impl = SortedList()
         self.__approx = approx_fcn
@@ -39,13 +52,10 @@ class ApproxSet(Set):
         return all(self.__approx(a, b) for a, b in zip(self.__impl, sequence))
 
     def __contains__(self, item):
-        """Does the set contain an item that is approximately equal to ``item``.
+        """Does the Set contain an item approximately equal to ``item``.
 
-        Args:
-            item:
-
-        Returns:
-
+        :param item: The item to test for membership.
+        :rtype: ``bool``
         """
         idx = self.__impl.bisect_right(item)
         return self.__test_index(idx, item) or self.__test_index(idx - 1, item)

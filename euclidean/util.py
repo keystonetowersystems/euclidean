@@ -2,17 +2,12 @@ from collections import deque
 
 
 def normalize_coefficients(*coefficients):
-    """normalize coefficients such that all equivants can be directly compared.
+    """Normalize coefficients such that all equivalents can be directly compared.
 
-    Raises:
-        ValueError: If all coefficients are 0.
+    :raises ValueError: If all coefficients are 0.
 
-
-    Args:
-        *coefficients (List[numbers.Real]):
-
-    Returns:
-        (Tuple[numbers.Real]): The equivalent coefficients in normalized form.
+    :param *coefficients: The unnormalized coefficients.
+    :rtype: Tuple[float, ...]
     """
     divisor = 0
     normalized = deque()
@@ -32,13 +27,13 @@ def normalize_coefficients(*coefficients):
 
 
 def methods(*meths):
-    """A decorator for attaching generic methods to a class.
+    """A class decorator for attaching generic methods to a class.
 
-    Args:
-        *meths:
+    .. note:
 
-    Returns:
+        The first argument of the function will be bound to self instance.
 
+    :param *meths: Raw functions to be bound to a class.
     """
 
     def decorator(cls):
