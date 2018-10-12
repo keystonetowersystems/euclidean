@@ -29,6 +29,9 @@ class Line:
     def _equation(self, point):
         return self._cx * point.x + self._cy * point.y
 
+    def normal(self):
+        return V2(self._cx, self._cy).unit()
+
     def translate(self, vector):
         cx = self._cx * (self._c + self._cy * vector.y)
         cy = self._cy * (self._c + self._cx * vector.x)
@@ -120,6 +123,19 @@ class Line:
 
     def __ne__(self, other):
         return not self == other
+
+    def is_parallel(self, line, atol=1e-6):
+        if not isinstance(line, Line):
+            raise unexpected_type_error("line", Line, line)
+        my_normal = self.normal()
+        mirror = -my_normal
+        other_normal = line.normal()
+        return my_normal.approx(other_normal, atol) or mirror.approx(other_normal, atol)
+
+    def does_intersect(self, line, atol=1e-6):
+        if self == line:
+            raise ValueError("Test Lines are identical.")
+        return not self.is_parallel(line, atol)
 
     def intersection(self, line):
         if not isinstance(line, Line):

@@ -38,22 +38,31 @@ class Circle:
     def area(self):
         return pi * self._radius ** 2
 
-    def intersection(self, circle):
+    def does_intersect(self, circle):
         if not isinstance(circle, Circle):
             raise unexpected_type_error("circle", Circle, circle)
 
         if self == circle:
             raise ValueError("Test circles are identical.")
 
+        vector = circle.center - self.center
+        magnitude = vector.magnitude()
+        if magnitude > self.radius + circle.radius:
+            return False
+        if magnitude < abs(self.radius - circle.radius):
+            return False
+
+        return True
+
+    def intersection(self, circle):
+        if not self.does_intersect(circle):
+            return set()
+
         my_c = self.center
         c_c = circle.center
 
         vector = c_c - my_c
         v_mag = vector.magnitude()
-        if v_mag > self.radius + circle.radius:
-            return set()  # separate
-        if v_mag < abs(self.radius - circle.radius):
-            return set()  # contained
 
         apothem = (self.radius ** 2 - circle.radius ** 2 + v_mag ** 2) / (2 * v_mag)
         intersect_center = my_c + apothem * vector.unit()
@@ -61,7 +70,7 @@ class Circle:
             return {intersect_center}
 
         h = (self.radius ** 2 - apothem ** 2) ** 0.5
-        offset = h * V2(c_c.y - my_c.y, my_c.x - c_c.x) / v_mag
+        offset = h / v_mag * V2(c_c.y - my_c.y, my_c.x - c_c.x)
 
         return {intersect_center + offset, intersect_center - offset}
 

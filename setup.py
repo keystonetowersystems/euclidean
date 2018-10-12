@@ -15,7 +15,7 @@ setup(
     author="Keystone Tower Systems",
     author_email="greg@keystonetowersystems.com",
     packages=find_packages(exclude=("tests",)),
-    setup_requires=["tox>=3"],
+    setup_requires=[],
     extras_require=EXTRAS_REQUIRE,
     install_requires=INSTALL_REQUIRES,
     zip_safe=False,

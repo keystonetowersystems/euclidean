@@ -107,12 +107,15 @@ def line_circle_intersection(line, circle):
     dr2 = dv.magnitude() ** 2
     determinant = p1.x * p2.y - p1.y * p2.x
     discriminant = circle.radius ** 2 * dr2 - determinant ** 2
+    if discriminant < 0:
+        return set()
+
     x0 = determinant * dv.y / dr2
     y0 = -determinant * dv.x / dr2
 
     central = P2(x0, y0) + vector
 
-    if discriminant <= 0:
+    if discriminant == 0:
         return {central}
 
     sqrt_descriminant = discriminant ** 0.5

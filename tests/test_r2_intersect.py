@@ -54,6 +54,10 @@ def test_line_circle():
     assert {P2(-99.0, 1.0), P2(101, 1.0)} == intersect(horz, circle)
     assert {P2(-99.0, 1.0), P2(101, 1.0)} == intersect(circle, horz)
 
+    far_line = Line(1, 0, 200)
+    assert set() == intersect(far_line, circle)
+    assert set() == intersect(circle, far_line)
+
 
 def test_line_segment_circle():
     circle = Circle(100, P2(1, 0))
