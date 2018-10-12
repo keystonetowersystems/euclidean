@@ -1,0 +1,9 @@
+[run]
+source=euclidean
+
+[report]
+show_missing = True
+omit =
+    */python?.?/*
+    */.eggs/*
+    *__init__*

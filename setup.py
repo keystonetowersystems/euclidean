@@ -1,15 +1,22 @@
 from setuptools import setup, find_packages
 
+INSTALL_REQUIRES = ["sortedcontainers>=2", "multipledispatch>=0.6"]
+EXTRAS_REQUIRE = {
+    "docs": [],
+    "tests": ["pytest", "coverage"],
+    "siquant": ["siquant==4.0.0b5"],
+}
+
 setup(
-    name='euclidean',
-    version='0.1.1',
-    description='2d euclidean geometry library',
-    url='https://github.com/keystonetowersystems/euclidean',
-    author='Keystone Tower Systems',
-    author_email='greg@keystonetowersystems.com',
-    packages=find_packages(exclude=('tests',)),
-    install_requires=[
-        'numpy>=1.12.1'
-    ],
-    zip_safe=False
+    name="euclidean",
+    version="1.0.0b1",
+    description="Euclidean Geometry Library",
+    url="https://github.com/keystonetowersystems/euclidean",
+    author="Keystone Tower Systems",
+    author_email="greg@keystonetowersystems.com",
+    packages=find_packages(exclude=("tests",)),
+    setup_requires=[],
+    extras_require=EXTRAS_REQUIRE,
+    install_requires=INSTALL_REQUIRES,
+    zip_safe=False,
 )
