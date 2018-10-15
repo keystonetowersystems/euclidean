@@ -6,7 +6,7 @@ def rotate(self, angle):
 
 
 def unit(self):
-    return make(self.quantity.unit(), self.units)
+    return make(self.quantity.unit(), si.unity)
 
 
 def dot(self, other):

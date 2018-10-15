@@ -65,7 +65,7 @@ def test_v3_magnitude():
 def test_v3_unit():
     xyz = V3(1, 2, 3) * si.meters
 
-    assert pytest.approx(1) == xyz.unit().magnitude().get_as(si.meters)
+    assert pytest.approx(1) == xyz.unit().magnitude().quantity
 
 
 def test_v3_add():

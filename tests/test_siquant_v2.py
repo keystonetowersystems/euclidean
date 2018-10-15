@@ -120,11 +120,11 @@ def test_qv2_unit():
 
     qv2 = make(V2(100, 0), si.meters)
 
-    assert make(V2(1, 0), si.meters) == qv2.unit()
+    assert make(V2(1, 0), si.unity) == qv2.unit()
 
     qv2 = qv2.cvt_to(si.millimeters)
 
-    assert make(V2(1, 0), si.millimeters) == qv2.unit()
+    assert make(V2(1, 0), si.unity) == qv2.unit()
 
 
 def test_qv2_mul():
