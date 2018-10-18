@@ -1,5 +1,6 @@
 from euclidean.util import normalize_coefficients
 from euclidean.exceptions import unexpected_type_error
+from euclidean.approx import approx
 
 from .cartesian import P2, V2
 
@@ -200,6 +201,11 @@ class LineSegment:
     def contains(self, point, atol=1e-6):
         if not isinstance(point, P2):
             raise unexpected_type_error("point", P2, point)
+
+        if approx(self._p1, point, atol):
+            return True
+        if approx(self._p2, point, atol):
+            return True
 
         line_vector = self.vector()
         test_vector = point - self._p1

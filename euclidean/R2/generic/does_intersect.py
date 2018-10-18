@@ -96,7 +96,7 @@ def __does_intersect_circle_line_segment(circle, line_segment):
         closest = p_min
 
     dist_vec = circle.center - closest
-    if dist_vec.dot(dist_vec) >= circle.radius ** 2:
+    if dist_vec.dot(dist_vec) > circle.radius ** 2:
         return False
     return not circle.contains(p_min) or not circle.contains(p_max)
 

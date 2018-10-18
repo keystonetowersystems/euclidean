@@ -126,6 +126,8 @@ def test_qv2_unit():
 
     assert make(V2(1, 0), si.unity) == qv2.unit()
 
+    assert qv2 == abs(qv2) * qv2.unit()
+
 
 def test_qv2_mul():
     qv2 = make(V2(3, 4), si.meters)
