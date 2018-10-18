@@ -22,7 +22,7 @@ EXTRAS_REQUIRE = {
 
 setup(
     name="euclidean",
-    version="1.0.0b2",
+    version="1.0.0b3",
     description="Euclidean Geometry Library",
     long_description=readme(),
     url="https://github.com/keystonetowersystems/euclidean",
