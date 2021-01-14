@@ -10,18 +10,18 @@ def does_intersect(circle1, circle2):
     return circle1.does_intersect(circle2)
 
 
-@dispatch(Line, Line)
-def does_intersect(line1, line2):
+@does_intersect.register(Line, Line)
+def _(line1, line2):
     return line1.does_intersect(line2)
 
 
-@dispatch(LineSegment, LineSegment)
-def does_intersect(line_segment1, line_segment2):
+@does_intersect.register(LineSegment, LineSegment)
+def _(line_segment1, line_segment2):
     return line_segment1.does_intersect(line_segment2)
 
 
-@dispatch(Polygon, Polygon)
-def does_intersect(polygon1, polygon2):
+@does_intersect.register(Polygon, Polygon)
+def _(polygon1, polygon2):
     # grab max and min points of polygons and return False if disjoint?
 
     for e1 in polygon1.edges():
@@ -31,53 +31,53 @@ def does_intersect(polygon1, polygon2):
     return False
 
 
-@dispatch(Line, LineSegment)
-def does_intersect(line, line_segment):
+@does_intersect.register(Line, LineSegment)
+def _(line, line_segment):
     return __does_intersect_line_line_segment(line, line_segment)
 
 
-@dispatch(LineSegment, Line)
-def does_intersect(line_segment, line):
+@does_intersect.register(LineSegment, Line)
+def _(line_segment, line):
     return __does_intersect_line_line_segment(line, line_segment)
 
 
-@dispatch(Circle, Line)
-def does_intersect(circle, line):
+@does_intersect.register(Circle, Line)
+def _(circle, line):
     return __does_intersect_circle_line(circle, line)
 
 
-@dispatch(Line, Circle)
-def does_intersect(line, circle):
+@does_intersect.register(Line, Circle)
+def _(line, circle):
     return __does_intersect_circle_line(circle, line)
 
 
-@dispatch(Circle, LineSegment)
-def does_intersect(circle, line_segment):
+@does_intersect.register(Circle, LineSegment)
+def _(circle, line_segment):
     return __does_intersect_circle_line_segment(circle, line_segment)
 
 
-@dispatch(LineSegment, Circle)
-def does_intersect(line_segment, circle):
+@does_intersect.register(LineSegment, Circle)
+def _(line_segment, circle):
     return __does_intersect_circle_line_segment(circle, line_segment)
 
 
-@dispatch(Polygon, Line)
-def does_intersect(polygon, line):
+@does_intersect.register(Polygon, Line)
+def _(polygon, line):
     return __does_intersect_polygon_line_like(polygon, line)
 
 
-@dispatch(Line, Polygon)
-def does_intersect(line, polygon):
+@does_intersect.register(Line, Polygon)
+def _(line, polygon):
     return __does_intersect_polygon_line_like(polygon, line)
 
 
-@dispatch(Polygon, LineSegment)
-def does_intersect(polygon, line_segment):
+@does_intersect.register(Polygon, LineSegment)
+def _(polygon, line_segment):
     return __does_intersect_polygon_line_like(polygon, line_segment)
 
 
-@dispatch(LineSegment, Polygon)
-def does_intersect(line_segment, polygon):
+@does_intersect.register(LineSegment, Polygon)
+def _(line_segment, polygon):
     return __does_intersect_polygon_line_like(polygon, line_segment)
 
 
