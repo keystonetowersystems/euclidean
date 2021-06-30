@@ -71,16 +71,12 @@ class Line:
     def perpendicular(self, test_point):
         """Find the line perpendicular to this line, passing through test_point.
 
-        If test_point is on this line, the case is degenerate and returns None
-
         Args:
             test_point (P2):
 
         Returns:
             (Line):
         """
-        if self.contains(test_point):
-            return None
         return Line(
             -self._cy, self._cx, self._cx * test_point.y - self._cy * test_point.x
         )
