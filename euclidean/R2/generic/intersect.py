@@ -12,74 +12,74 @@ def intersect(line_1, line_2):
     return {point} if point else set()
 
 
-@dispatch(LineSegment, LineSegment)
-def intersect(line_segment_1, line_segment_2):
+@intersect.register(LineSegment, LineSegment)
+def _(line_segment_1, line_segment_2):
     point = line_segment_1.intersection(line_segment_2)
     return {point} if point else set()
 
 
-@dispatch(Line, LineSegment)
-def intersect(line, line_segment):
+@intersect.register(Line, LineSegment)
+def _(line, line_segment):
     return line_line_segment_intersection(line, line_segment)
 
 
-@dispatch(LineSegment, Line)
-def intersect(line_segment, line):
+@intersect.register(LineSegment, Line)
+def _(line_segment, line):
     return line_line_segment_intersection(line, line_segment)
 
 
-@dispatch(Line, Circle)
-def intersect(line, circle):
+@intersect.register(Line, Circle)
+def _(line, circle):
     return line_circle_intersection(line, circle)
 
 
-@dispatch(Circle, Line)
-def intersect(circle, line):
+@intersect.register(Circle, Line)
+def _(circle, line):
     return line_circle_intersection(line, circle)
 
 
-@dispatch(LineSegment, Circle)
-def intersect(line_segment, circle):
+@intersect.register(LineSegment, Circle)
+def _(line_segment, circle):
     return line_segment_circle_intersection(line_segment, circle)
 
 
-@dispatch(Circle, LineSegment)
-def intersect(circle, line_segment):
+@intersect.register(Circle, LineSegment)
+def _(circle, line_segment):
     return line_segment_circle_intersection(line_segment, circle)
 
 
-@dispatch(Circle, Circle)
-def intersect(circle_1, circle_2):
+@intersect.register(Circle, Circle)
+def _(circle_1, circle_2):
     return circle_circle_intersection(circle_1, circle_2)
 
 
-@dispatch(Polygon, Line)
-def intersect(polygon, line):
+@intersect.register(Polygon, Line)
+def _(polygon, line):
     return polygon_intersection(polygon, line)
 
 
-@dispatch(Line, Polygon)
-def intersect(line, polygon):
+@intersect.register(Line, Polygon)
+def _(line, polygon):
     return polygon_intersection(polygon, line)
 
 
-@dispatch(Polygon, LineSegment)
-def intersect(polygon, line_segment):
+@intersect.register(Polygon, LineSegment)
+def _(polygon, line_segment):
     return polygon_intersection(polygon, line_segment)
 
 
-@dispatch(LineSegment, Polygon)
-def intersect(line_segment, polygon):
+@intersect.register(LineSegment, Polygon)
+def _(line_segment, polygon):
     return polygon_intersection(polygon, line_segment)
 
 
-@dispatch(Polygon, Circle)
-def intersect(polygon, circle):
+@intersect.register(Polygon, Circle)
+def _(polygon, circle):
     raise NotImplementedError("todo")
 
 
-@dispatch(Circle, Polygon)
-def intersect(circle, polygon):
+@intersect.register(Circle, Polygon)
+def _(circle, polygon):
     raise NotImplementedError("todo")
 
 

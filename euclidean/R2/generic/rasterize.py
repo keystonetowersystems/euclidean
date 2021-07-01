@@ -16,15 +16,15 @@ def rasterize(line_segment, n=100):
     return [line_segment._p1 + i * step_vec for i in range(n)]
 
 
-@dispatch(Circle)
-def rasterize(circle, n=360):
+@rasterize.register(Circle)
+def _(circle, n=360):
     rot_theta = tau / n
     radius_vector = circle.radius * V2(1, 0)
     return [circle.center + radius_vector.rotate(rot_theta * i) for i in range(n)]
 
 
-@dispatch(Polygon)
-def rasterize(polygon, n=1000):
+@rasterize.register(Polygon)
+def _(polygon, n=1000):
     n = int(n)
     assert n >= len(polygon)
     poly_points = list(polygon.points())
