@@ -34,13 +34,13 @@ class Line:
         return V2(self._cx, self._cy).unit()
 
     def translate(self, vector):
-        cx = self._cx * (self._c + self._cy * vector.y)
-        cy = self._cy * (self._c + self._cx * vector.x)
-        c = self._c ** 2
-        c += self._cx * self._c * vector.x
-        c += self._cy * self._c * vector.y
-        c += self._cx * self._cy * vector.x * vector.y
-        return Line(cx, cy, c)
+        if self._cy == 0:
+            p1 = P2(self.x(0), 0)
+            p2 = P2(self.x(1), 1)
+        else:
+            p1 = P2(0, self.y(0))
+            p2 = P2(1, self.y(1))
+        return LineSegment(p1+vector, p2+vector).line()
 
     def x(self, y):
         """Find the corresponding x coordinate on the line for coordinate y
