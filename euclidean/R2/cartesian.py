@@ -75,6 +75,8 @@ class V2(Cartesian2):
     __abs__ = magnitude
 
     def angle(self, other):
+        if self.is_parallel(other):
+            return math.acos(1)
         return math.acos(self.dot(other) / self.magnitude() / other.magnitude())
 
     def rotate(self, radians):
