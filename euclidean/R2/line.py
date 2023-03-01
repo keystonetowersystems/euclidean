@@ -1,3 +1,5 @@
+import math
+
 from euclidean.util import normalize_coefficients
 from euclidean.exceptions import unexpected_type_error
 from euclidean.approx import approx
@@ -41,6 +43,18 @@ class Line:
             p1 = P2(0, self.y(0))
             p2 = P2(1, self.y(1))
         return LineSegment(p1+vector, p2+vector).line()
+
+    def rotate(self, radians, center_point=None):
+        center_point = center_point if center_point else P2(0, 0)
+        translated = self.translate(-center_point.vector())
+        cos = math.cos(radians)
+        sin = math.sin(radians)
+        rotated = Line(
+            translated._cx * cos - translated._cy * sin,
+            translated._cx * sin + translated._cy * cos,
+            translated._c
+        )
+        return rotated.translate(center_point.vector())
 
     def x(self, y):
         """Find the corresponding x coordinate on the line for coordinate y
