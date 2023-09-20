@@ -29,6 +29,21 @@ class Circle:
         diff = point - self.center
         return diff.dot(diff)
 
+    def translate(self, vector):
+        return Circle(
+            self.radius,
+            self.center + vector
+        )
+
+    def rotate(self, radians, center_point=None):
+        center_point = center_point if center_point else P2(0, 0)
+        translated = self.translate(-center_point.vector())
+        rotated = Circle(
+            translated.radius,
+            P2(0, 0) + translated.center.vector().rotate(radians)
+        )
+        return rotated.translate(center_point.vector())
+
     def on_circumference(self, point, atol=1e-6):
         return abs(self._equation(point) - self.radius ** 2) <= atol
 

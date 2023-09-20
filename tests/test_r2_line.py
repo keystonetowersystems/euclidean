@@ -1,6 +1,7 @@
 import pytest
 
-from euclidean.R2 import Line, P2, V2
+import math
+from euclidean.R2 import Line, P2, V2, Circle, LineSegment, intersect
 
 
 def test_create():
@@ -188,3 +189,15 @@ def test_line_above():
     assert sloped.on_side(P2(-1, -1)) == -1
     assert sloped.on_side(P2(-10, 20)) == 1
     assert sloped.on_side(P2(-10, 10)) == 0
+
+
+def test_line_rotation():
+    line1 = Line(1, 0, 3)
+    line2 = line1.rotate(math.pi/3, P2(1, 2))
+    circle = Circle(5)
+    p11, p12 = intersect(line1, circle)
+    p21, p22 = intersect(line2, circle)
+    ls1 = LineSegment(p11, p12)
+    ls2 = LineSegment(p21, p22)
+    assert ls1.vector().angle(ls2.vector()) == pytest.approx(math.pi/3)
+
