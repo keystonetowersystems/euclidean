@@ -95,9 +95,7 @@ def line_line_segment_intersection(line, line_segment):
 
 def line_circle_intersection(line, circle):
     vcenter = circle.center.vector()
-    print(line)
     line = line.translate(-vcenter)
-    print(line)
 
     p0 = line.closest(P2(0, 0))
     d0 = p0.vector().magnitude()
