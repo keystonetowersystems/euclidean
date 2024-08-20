@@ -16,13 +16,13 @@ TESTS_REQUIRE = ["pytest", "coverage"]
 EXTRAS_REQUIRE = {
     "docs": [],
     "tests": TESTS_REQUIRE,
-    "siquant": ["siquant==4.0.0b6"],
+    "cyquant": ["cyquant>=1.0.0a10"],
     "dev": TESTS_REQUIRE + ["pre-commit"],
 }
 
 setup(
     name="euclidean",
-    version="1.0.0b5",
+    version="1.0.1",
     description="Euclidean Geometry Library",
     long_description=readme(),
     url="https://github.com/keystonetowersystems/euclidean",
