@@ -1,5 +1,5 @@
 build: clean
-  python set.py sdist
+  python setup.py sdist
 
 clean:
   rm -rf dist
