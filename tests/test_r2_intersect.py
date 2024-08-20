@@ -1,7 +1,6 @@
 import pytest
 
 from euclidean.R2 import intersect, P2, Circle, Polygon, LineSegment, Line
-#from euclidean.R2 import does_intersect
 
 
 def test_line_line():
