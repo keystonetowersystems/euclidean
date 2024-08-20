@@ -1,6 +1,7 @@
 import pytest
 
 from euclidean.R2 import intersect, P2, Circle, Polygon, LineSegment, Line
+#from euclidean.R2 import does_intersect
 
 
 def test_line_line():
@@ -116,3 +117,10 @@ def test_polygon_line_segment():
     ls = LineSegment(P2(0, -10), P2(0, 10))
     assert {P2(0.0, -1.0), P2(0.0, 1.0)} == intersect(polygon, ls)
     assert {P2(0.0, -1.0), P2(0.0, 1.0)} == intersect(ls, polygon)
+
+def test_segment_circle_from_production():
+    c = Circle(66993.801021374, P2(0, 0))
+    seg = LineSegment(P2(66993.87203200649, -0.30477252877198957), P2(66992.09717787399, -10.630879407203063))
+    i = intersect(c, seg)
+    assert len(i) == 1
+

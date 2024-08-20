@@ -94,41 +94,30 @@ def line_line_segment_intersection(line, line_segment):
 
 
 def line_circle_intersection(line, circle):
-    vector = circle.center.vector()
-    line = line.translate(-vector)
-    if line._cy == 0:
-        p1 = P2(line.x(0), 0)
-        p2 = P2(line.x(1), 1)
-    else:
-        p1 = P2(0, line.y(0))
-        p2 = P2(1, line.y(1))
+    vcenter = circle.center.vector()
+    print(line)
+    line = line.translate(-vcenter)
+    print(line)
 
-    dv = p2 - p1
-    dr2 = dv.magnitude() ** 2
-    determinant = p1.x * p2.y - p1.y * p2.x
-    discriminant = circle.radius ** 2 * dr2 - determinant ** 2
-    if discriminant < 0:
+    p0 = line.closest(P2(0, 0))
+    d0 = p0.vector().magnitude()
+
+    if d0 == circle.radius:
+        return set([p0 + vcenter])
+    elif d0 > circle.radius:
         return set()
-
-    x0 = determinant * dv.y / dr2
-    y0 = -determinant * dv.x / dr2
-
-    central = P2(x0, y0) + vector
-
-    if discriminant == 0:
-        return {central}
-
-    sqrt_descriminant = discriminant ** 0.5
-    sign_y = -1 if dv.y < 0 else 1
-    x_off = sign_y * dv.x * sqrt_descriminant / dr2
-    y_off = abs(dv.y) * sqrt_descriminant / dr2
-    offset = V2(x_off, y_off)
-
-    return {central + offset, central - offset}
+    else:
+        a = line._cx**2 + line._cy**2
+        d = circle.radius**2 - line._c**2 / a
+        mult = (d / a)**0.5
+        i1 = P2(p0.x + line._cy * mult, p0.y - line._cx * mult)
+        i2 = P2(p0.x - line._cy * mult, p0.y + line._cx * mult)
+        return set([i1 + vcenter, i2 + vcenter])
 
 
 def line_segment_circle_intersection(line_segment, circle):
     points = intersect(line_segment.line(), circle)
+    print("points", points)
     return set(p for p in points if line_segment.contains(p))
 
 
