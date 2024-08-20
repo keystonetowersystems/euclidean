@@ -36,13 +36,8 @@ class Line:
         return V2(self._cx, self._cy).unit()
 
     def translate(self, vector):
-        if self._cy == 0:
-            p1 = P2(self.x(0), 0)
-            p2 = P2(self.x(1), 1)
-        else:
-            p1 = P2(0, self.y(0))
-            p2 = P2(1, self.y(1))
-        return LineSegment(p1+vector, p2+vector).line()
+        new_c = self._c + vector.x * self._cx + vector.y * self._cy
+        return Line(self._cx, self._cy, new_c)
 
     def rotate(self, radians, center_point=None):
         center_point = center_point if center_point else P2(0, 0)
@@ -173,6 +168,9 @@ class Line:
         if point.y < self.y(point.x):
             return -1
         return 0
+
+    def __str__ (self):
+        return "Line{}".format(self._coeffs)
 
 
 class LineSegment:
