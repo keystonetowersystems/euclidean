@@ -115,7 +115,6 @@ def line_circle_intersection(line, circle):
 
 def line_segment_circle_intersection(line_segment, circle):
     points = intersect(line_segment.line(), circle)
-    print("points", points)
     return set(p for p in points if line_segment.contains(p))
 
 
